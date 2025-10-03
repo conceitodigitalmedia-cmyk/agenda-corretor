@@ -3,29 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corretor - Completo</title>
+<title>Agenda Corretor - Full</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
 body{background:#121212;color:#fff;padding:20px;min-height:100vh;}
 h1,h2{text-align:center;margin-bottom:20px;}
-
-/* Tela Inicial */
 #homeDiv{max-width:500px;margin:50px auto;text-align:center;}
 #homeDiv button{width:80%;margin:10px;padding:15px;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:.3s;color:#fff;}
-#btnCadastro{background:#3399ff;}
-#btnCadastro:hover{background:#66b3ff;}
-#btnLogin{background:#4caf50;}
-#btnLogin:hover{background:#66d36f;}
-#btnCliente{background:#ff9800;}
-#btnCliente:hover{background:#ffb366;}
-
-/* Boxes */
+#btnCadastro{background:#3399ff;} #btnCadastro:hover{background:#66b3ff;}
+#btnLogin{background:#4caf50;} #btnLogin:hover{background:#66d36f;}
+#btnCliente{background:#ff9800;} #btnCliente:hover{background:#ffb366;}
 .box{max-width:400px;margin:50px auto;background:#1e1e1e;padding:30px;border-radius:10px;box-shadow:0 0 20px rgba(255,0,128,0.3);}
 .box input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#2c2c2c;color:#fff;}
 .box button{width:100%;padding:12px;border:none;border-radius:6px;background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
 .box button:hover{background:#ff66b3;}
-
-/* Painel Corretor */
 #panelDiv,#clientDiv,#registerDiv,#loginDiv{display:none;}
 .welcome{text-align:center;margin-bottom:20px;color:#ff66b3;font-size:1.2em;}
 .form-imovel,.form-schedule{max-width:700px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap;}
@@ -33,34 +24,23 @@ h1,h2{text-align:center;margin-bottom:20px;}
 .form-imovel textarea{flex-basis:100%;background:#2c2c2c;color:#fff;resize:none;}
 .form-imovel button,.form-schedule button{background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
 .form-imovel button:hover,.form-schedule button:hover{background:#ff66b3;}
-
-/* Cards de Imóveis */
 .cards-container{max-width:1000px;margin:30px auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;}
 .card{background:#1e1e1e;padding:20px;border-radius:10px;border:2px solid #ff3399;transition:.3s;position:relative;}
 .card:hover{border-color:#ff66b3;transform:translateY(-5px);}
 .card h3{color:#ff66b3;margin-bottom:10px;}
 .card p{margin:5px 0;}
 .edit-btn,.remove-btn{position:absolute;top:10px;padding:5px 8px;border:none;border-radius:6px;cursor:pointer;transition:.3s;color:#fff;}
-.edit-btn{right:50px;background:#3399ff;}
-.edit-btn:hover{background:#66b3ff;}
-.remove-btn{right:10px;background:#ff3333;}
-.remove-btn:hover{background:#ff6666;}
-
-/* Quadro de horários */
+.edit-btn{right:50px;background:#3399ff;} .edit-btn:hover{background:#66b3ff;}
+.remove-btn{right:10px;background:#ff3333;} .remove-btn:hover{background:#ff6666;}
 .schedule{max-width:700px;margin:20px auto;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;}
 .slot{padding:10px;border-radius:6px;cursor:pointer;}
-.available{background:#4caf50;}
-.occupied{background:#f44336;}
-.personal{background:#ff9800;}
-
-/* Fotos */
+.available{background:#4caf50;} .occupied{background:#f44336;} .personal{background:#ff9800;}
 .img-container{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
 .img-container img{width:48%;border-radius:6px;}
 </style>
 </head>
 <body>
 
-<!-- Tela Inicial -->
 <div id="homeDiv">
   <h1>Agenda Corretor</h1>
   <button id="btnCadastro" onclick="showRegister()">Cadastro Corretor</button>
@@ -68,7 +48,6 @@ h1,h2{text-align:center;margin-bottom:20px;}
   <button id="btnCliente" onclick="showClient()">Acesso Cliente</button>
 </div>
 
-<!-- Cadastro Corretor -->
 <div id="registerDiv" class="box">
   <h2>Cadastro Corretor</h2>
   <input type="text" id="nome" placeholder="Nome (obrigatório)">
@@ -81,7 +60,6 @@ h1,h2{text-align:center;margin-bottom:20px;}
   <p id="registerMsg" style="color:green;text-align:center;"></p>
 </div>
 
-<!-- Login Corretor -->
 <div id="loginDiv" class="box">
   <h2>Login Corretor</h2>
   <input type="text" id="username" placeholder="Usuário">
@@ -90,12 +68,10 @@ h1,h2{text-align:center;margin-bottom:20px;}
   <p id="loginError" style="color:red;text-align:center;"></p>
 </div>
 
-<!-- Painel Corretor -->
 <div id="panelDiv">
   <h1>Painel do Corretor</h1>
   <h2 class="welcome" id="welcome"></h2>
 
-  <!-- Form Imóvel -->
   <div class="form-imovel">
     <input type="text" id="imovel" placeholder="Nome do imóvel">
     <input type="text" id="preco" placeholder="Preço">
@@ -124,7 +100,6 @@ h1,h2{text-align:center;margin-bottom:20px;}
   </div>
 </div>
 
-<!-- Painel Cliente -->
 <div id="clientDiv">
   <h1>Painel Cliente</h1>
   <div class="cards-container" id="clientCards"></div>
@@ -132,10 +107,7 @@ h1,h2{text-align:center;margin-bottom:20px;}
 
 <script>
 const sheetUrl = "https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
-
-// Corretores
-let users = [];
-let currentUser = null;
+let currentUser=null;
 
 // ---------- Navegação ----------
 function showLogin(){ hideAll(); document.getElementById("loginDiv").style.display="block"; }
@@ -145,58 +117,57 @@ function hideAll(){ document.getElementById("homeDiv").style.display="none"; doc
 function backHome(){ hideAll(); document.getElementById("homeDiv").style.display="block"; }
 
 // ---------- Cadastro ----------
-function registerCorretor(){
+async function registerCorretor(){
   const nome=document.getElementById("nome").value.trim();
   const email=document.getElementById("email").value.trim();
   const telefone=document.getElementById("telefone").value.trim();
   const creci=document.getElementById("creci").value.trim();
   const senha=document.getElementById("senha").value.trim();
-  if(!nome || !telefone || !creci || !senha){ alert("Preencha todos os campos obrigatórios!"); return; }
-  if(users.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
-  users.push({nome,email,telefone,creci,senha,username:nome.toLowerCase()});
+  if(!nome||!telefone||!creci||!senha){ alert("Preencha todos os campos obrigatórios!"); return; }
+
+  const res = await fetch(sheetUrl); const data = await res.json();
+  if(data.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
+
+  await fetch(sheetUrl,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({nome,email,telefone,creci,senha,username:nome.toLowerCase()})
+  });
+
   document.getElementById("registerMsg").innerText="Corretor cadastrado com sucesso!";
   document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${nome.toLowerCase()}`;
 }
 
 // ---------- Login ----------
-function login(){
+async function login(){
   const username=document.getElementById("username").value.trim();
   const password=document.getElementById("password").value.trim();
-  const user = users.find(u=>u.username===username && u.senha===password);
+  const res = await fetch(sheetUrl); const data = await res.json();
+  const user = data.find(u=>u.username===username && u.senha===password);
   if(user){
-    currentUser=user;
-    hideAll();
-    document.getElementById("panelDiv").style.display="block";
+    currentUser=user; hideAll(); document.getElementById("panelDiv").style.display="block";
     document.getElementById("welcome").innerText=`Bem-vindo, ${user.nome}`;
     document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${user.username}`;
-    loadImoveis();
-    loadSchedule();
-  }else{ document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
+    loadImoveis(); loadSchedule();
+  } else { document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
 }
 
-// ---------- Adicionar/Atualizar Imóvel ----------
-function addOrUpdateImovel(){
+// ---------- Adicionar/Editar Imóveis ----------
+async function addOrUpdateImovel(){
   const imovel=document.getElementById("imovel").value.trim();
   if(!imovel){ alert("Informe o nome do imóvel!"); return; }
-  alert("Imóvel adicionado/atualizado (integração SheetBest ainda precisa configurar)!");
+  // Aqui você faria a integração para criar/atualizar imóvel na planilha
+  alert("Imóvel adicionado/atualizado (precisa configurar SheetBest)!"); 
 }
 
 // ---------- Carregar Imóveis ----------
-function loadImoveis(){
-  document.getElementById("cardsContainer").innerHTML="(Aqui aparecerão os imóveis do corretor)";
-}
+function loadImoveis(){ document.getElementById("cardsContainer").innerHTML="(Aqui aparecerão os imóveis do corretor)"; }
 
 // ---------- Quadro de horários ----------
 function loadSchedule(){
-  const container=document.getElementById("scheduleContainer");
-  container.innerHTML="";
+  const container=document.getElementById("scheduleContainer"); container.innerHTML="";
   const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-  for(let i=0;i<7;i++){
-    const slot=document.createElement("div");
-    slot.classList.add("slot","available");
-    slot.innerText=dias[i];
-    container.appendChild(slot);
-  }
+  for(let i=0;i<7;i++){ const slot=document.createElement("div"); slot.classList.add("slot","available"); slot.innerText=dias[i]; container.appendChild(slot); }
 }
 
 // ---------- Cliente via link ----------
