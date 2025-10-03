@@ -1,257 +1,472 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corretor - Final</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agenda Corretor</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
-body{background:#121212;color:#fff;padding:20px;min-height:100vh;}
-h1,h2{text-align:center;margin-bottom:20px;}
-#homeDiv{max-width:500px;margin:50px auto;text-align:center;}
-#homeDiv button{width:80%;margin:10px;padding:15px;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:.3s;color:#fff;}
-#btnCadastro{background:#3399ff;} #btnCadastro:hover{background:#66b3ff;}
-#btnLogin{background:#4caf50;} #btnLogin:hover{background:#66d36f;}
-#btnCliente{background:#ff9800;} #btnCliente:hover{background:#ffb366;}
-.box{max-width:400px;margin:50px auto;background:#1e1e1e;padding:30px;border-radius:10px;box-shadow:0 0 20px rgba(255,0,128,0.3);}
-.box input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#2c2c2c;color:#fff;}
-.box button{width:100%;padding:12px;border:none;border-radius:6px;background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
-.box button:hover{background:#ff66b3;}
-#panelDiv,#clientDiv,#registerDiv,#loginDiv{display:none;}
-.welcome{text-align:center;margin-bottom:20px;color:#ff66b3;font-size:1.2em;}
-.form-imovel,.form-schedule{max-width:700px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap;}
-.form-imovel input,.form-imovel textarea,.form-imovel button,.form-schedule input,.form-schedule button{flex:1 1 150px;padding:10px;border-radius:6px;border:none;}
-.form-imovel textarea{flex-basis:100%;background:#2c2c2c;color:#fff;resize:none;}
-.form-imovel button,.form-schedule button{background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
-.form-imovel button:hover,.form-schedule button:hover{background:#ff66b3;}
-.cards-container{max-width:1000px;margin:30px auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;}
-.card{background:#1e1e1e;padding:20px;border-radius:10px;border:2px solid #ff3399;transition:.3s;position:relative;}
-.card:hover{border-color:#ff66b3;transform:translateY(-5px);}
-.card h3{color:#ff66b3;margin-bottom:10px;}
-.card p{margin:5px 0;}
-.edit-btn,.remove-btn{position:absolute;top:10px;padding:5px 8px;border:none;border-radius:6px;cursor:pointer;transition:.3s;color:#fff;}
-.edit-btn{right:50px;background:#3399ff;} .edit-btn:hover{background:#66b3ff;}
-.remove-btn{right:10px;background:#ff3333;} .remove-btn:hover{background:#ff6666;}
-.schedule{max-width:700px;margin:20px auto;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;}
-.slot{padding:10px;border-radius:6px;cursor:pointer;}
-.available{background:#4caf50;} .occupied{background:#f44336;} .personal{background:#ff9800;}
-.img-container{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
-.img-container img{width:48%;border-radius:6px;}
+/* layout simples e responsivo (mantive o visual que combinamos) */
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
+body{background:#0f0f10;color:#fff;padding:18px;min-height:100vh}
+h1,h2{ text-align:center;margin-bottom:14px }
+.container{max-width:1100px;margin:0 auto}
+#homeDiv{max-width:520px;margin:48px auto;text-align:center}
+.btn{display:block;width:80%;margin:10px auto;padding:14px;border-radius:10px;border:none;color:#fff;font-weight:700;cursor:pointer}
+.btn-blue{background:#2f8ef7}
+.btn-green{background:#33c16b}
+.btn-orange{background:#ff9800}
+.box{max-width:720px;margin:18px auto;background:#121212;padding:18px;border-radius:10px;border:1px solid #222}
+.input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;background:#141416;color:#fff}
+.grid{display:grid;gap:12px}
+.grid-cols-3{grid-template-columns:repeat(3,1fr)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:16px}
+.card{background:#141416;padding:14px;border-radius:10px;border:1px solid #2b2b2b}
+.small{font-size:0.9rem;color:#ddd}
+.schedule{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.slot{padding:8px;border-radius:8px;text-align:center;cursor:pointer;font-weight:700}
+.available{background:#2ecc71;color:#012}
+.occupied{background:#e74c3c;color:#fff}
+.personal{background:#f39c12;color:#111}
+.linkbox{margin-top:14px;text-align:center}
+.readonly{width:100%;padding:10px;border-radius:8px;border:none;background:#222;color:#fff}
+.note{font-size:0.9rem;color:#bbb;margin-top:8px;text-align:center}
 </style>
 </head>
 <body>
+<div class="container">
 
-<div id="homeDiv">
-  <h1>Agenda Corretor</h1>
-  <button id="btnCadastro" onclick="showRegister()">Cadastro Corretor</button>
-  <button id="btnLogin" onclick="showLogin()">Login Corretor</button>
-  <button id="btnCliente" onclick="showClient()">Acesso Cliente</button>
-</div>
-
-<div id="registerDiv" class="box">
-  <h2>Cadastro Corretor</h2>
-  <input type="text" id="nome" placeholder="Nome (obrigatório)">
-  <input type="email" id="email" placeholder="E-mail">
-  <input type="text" id="telefone" placeholder="Telefone (obrigatório)">
-  <input type="text" id="creci" placeholder="CRECI (obrigatório)">
-  <input type="password" id="senha" placeholder="Senha (obrigatório)">
-  <button onclick="registerCorretor()">Cadastrar</button>
-  <button onclick="backHome()">Voltar</button>
-  <p id="registerMsg" style="color:green;text-align:center;"></p>
-</div>
-
-<div id="loginDiv" class="box">
-  <h2>Login Corretor</h2>
-  <input type="text" id="username" placeholder="Usuário">
-  <input type="password" id="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="loginError" style="color:red;text-align:center;"></p>
-</div>
-
-<div id="panelDiv">
-  <h1>Bem-vindo à Agenda do Corretor</h1>
-  <h2 class="welcome" id="welcome"></h2>
-
-  <div class="form-imovel">
-    <input type="text" id="imovel" placeholder="Nome do imóvel">
-    <input type="text" id="preco" placeholder="Preço">
-    <input type="text" id="endereco" placeholder="Endereço / Cidade">
-    <input type="text" id="site" placeholder="Site do imóvel">
-    <textarea id="descricao" placeholder="Descrição"></textarea>
-    <input type="text" id="foto1" placeholder="Link Foto 1">
-    <input type="text" id="foto2" placeholder="Link Foto 2">
-    <input type="text" id="foto3" placeholder="Link Foto 3">
-    <input type="text" id="foto4" placeholder="Link Foto 4">
-    <input type="text" id="foto5" placeholder="Link Foto 5">
-    <input type="text" id="foto6" placeholder="Link Foto 6">
-    <input type="text" id="foto7" placeholder="Link Foto 7">
-    <input type="text" id="foto8" placeholder="Link Foto 8">
-    <input type="text" id="foto9" placeholder="Link Foto 9">
-    <input type="text" id="foto10" placeholder="Link Foto 10">
-    <button onclick="addOrUpdateImovel()">Adicionar/Atualizar Imóvel</button>
+  <!-- HOME -->
+  <div id="homeDiv">
+    <h1>Agenda Corretor</h1>
+    <button class="btn btn-blue" onclick="showRegister()">Cadastro Corretor</button>
+    <button class="btn btn-green" onclick="showLogin()">Login Corretor</button>
+    <button class="btn btn-orange" onclick="showClient()">Acesso Cliente</button>
+    <p class="note">Use o botão "Acesso Cliente" quando tiver o link do corretor (ex.: ?user=marcos)</p>
   </div>
 
-  <div class="cards-container" id="cardsContainer"></div>
-  <div class="schedule" id="scheduleContainer"></div>
-
-  <div style="text-align:center;margin-top:20px;">
-    <p>Link individual do corretor para clientes:</p>
-    <input type="text" id="linkCorretor" style="width:80%;padding:10px;" readonly>
+  <!-- CADASTRO -->
+  <div id="registerDiv" class="box" style="display:none">
+    <h2>Cadastro de Corretor</h2>
+    <input id="nome" class="input" placeholder="Nome (obrigatório)" />
+    <input id="email" class="input" placeholder="E-mail" />
+    <input id="telefone" class="input" placeholder="Telefone (obrigatório)" />
+    <input id="creci" class="input" placeholder="CRECI (obrigatório)" />
+    <input id="senha" class="input" type="password" placeholder="Senha (obrigatório)" />
+    <button class="btn btn-blue" onclick="registerCorretor()">Cadastrar</button>
+    <button class="btn" onclick="backHome()">Voltar</button>
+    <p id="registerMsg" class="small" style="margin-top:10px"></p>
   </div>
-</div>
 
-<div id="clientDiv">
-  <h1>Painel Cliente</h1>
-  <div class="cards-container" id="clientCards"></div>
-  <div class="schedule" id="clientSchedule"></div>
+  <!-- LOGIN -->
+  <div id="loginDiv" class="box" style="display:none">
+    <h2>Login Corretor</h2>
+    <input id="username" class="input" placeholder="Usuário (nome em minúsculas)" />
+    <input id="password" class="input" type="password" placeholder="Senha" />
+    <button class="btn btn-green" onclick="login()">Entrar</button>
+    <button class="btn" onclick="backHome()">Voltar</button>
+    <p id="loginError" class="small" style="margin-top:10px;color:#ff7777"></p>
+  </div>
+
+  <!-- PAINEL CORRETOR -->
+  <div id="panelDiv" class="box" style="display:none">
+    <h1>Bem-vindo à Agenda do Corretor</h1>
+    <h2 id="welcome" class="small" style="margin-bottom:10px"></h2>
+
+    <div>
+      <h3 style="margin-bottom:8px">Adicionar / Atualizar Imóvel</h3>
+      <div class="grid">
+        <input id="nomeImovel" class="input" placeholder="Nome do imóvel" />
+        <input id="preco" class="input" placeholder="Preço" />
+        <input id="endereco" class="input" placeholder="Endereço / Cidade" />
+        <input id="site" class="input" placeholder="Site do imóvel" />
+        <textarea id="descricao" class="input" rows="3" placeholder="Descrição"></textarea>
+        <!-- fotos -->
+        <input id="foto1" class="input" placeholder="Link Foto 1" />
+        <input id="foto2" class="input" placeholder="Link Foto 2" />
+        <input id="foto3" class="input" placeholder="Link Foto 3" />
+        <input id="foto4" class="input" placeholder="Link Foto 4" />
+        <input id="foto5" class="input" placeholder="Link Foto 5" />
+        <input id="foto6" class="input" placeholder="Link Foto 6" />
+        <input id="foto7" class="input" placeholder="Link Foto 7" />
+        <input id="foto8" class="input" placeholder="Link Foto 8" />
+        <input id="foto9" class="input" placeholder="Link Foto 9" />
+        <input id="foto10" class="input" placeholder="Link Foto 10" />
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn btn-blue" onclick="addImovel()">Adicionar Imóvel</button>
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <h3>Seus imóveis</h3>
+      <div id="cardsContainer" class="cards"></div>
+    </div>
+
+    <div style="margin-top:18px">
+      <h3>Horários (bloqueios pessoais)</h3>
+      <div id="scheduleContainer" class="schedule"></div>
+      <p class="small">Clique em um horário para bloquear/desbloquear para uso pessoal. Clientes verão bloqueios em laranja.</p>
+    </div>
+
+    <div class="linkbox">
+      <p class="small">Link individual do corretor para clientes:</p>
+      <input id="linkCorretor" class="readonly" readonly />
+    </div>
+
+    <div style="margin-top:10px;text-align:center">
+      <button class="btn" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- PAINEL CLIENTE -->
+  <div id="clientDiv" class="box" style="display:none">
+    <h2>Painel Cliente</h2>
+    <div id="clientCards" class="cards"></div>
+    <div id="clientScheduleTitle" style="margin-top:12px;text-align:center"></div>
+    <div id="clientSchedule" class="schedule"></div>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn" onclick="backHome()">Voltar</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
-const sheetUrl="https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
-const headers = {
+/* ========== CONFIG ========== */
+const SHEET_URL = "https://api.sheetbest.com/sheets/7085afe7-290d-45f3-b2d1-a5098c37e4eb";
+const HEADERS = {
   "Content-Type": "application/json",
-  "X-Api-Key": "S@r@kOI_%lZFzQd!d7@bkSdQw#$oI9cdB57yarmlf_Z$0i3H29BzpamszZeZdK2n"
+  "X-Api-Key": "COLE_SUA_CHAVE_AQUI"   // <-- substitua aqui pela sua X-Api-Key do SheetBest
 };
-let currentUser=null;
+/* ============================ */
 
-function showLogin(){ hideAll(); document.getElementById("loginDiv").style.display="block"; }
+let currentUser = null; // objeto do usuário logado
+let currentImovel = null; // imovel selecionado (quando necessário)
+
+/* ---------- helpers ---------- */
+function hideAll(){ document.getElementById("homeDiv").style.display="none"; document.getElementById("registerDiv").style.display="none"; document.getElementById("loginDiv").style.display="none"; document.getElementById("panelDiv").style.display="none"; document.getElementById("clientDiv").style.display="none"; }
 function showRegister(){ hideAll(); document.getElementById("registerDiv").style.display="block"; }
+function showLogin(){ hideAll(); document.getElementById("loginDiv").style.display="block"; }
 function showClient(){ hideAll(); document.getElementById("clientDiv").style.display="block"; }
-function hideAll(){ document.getElementById("homeDiv").style.display="none"; document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="none"; document.getElementById("panelDiv").style.display="none"; document.getElementById("clientDiv").style.display="none";}
 function backHome(){ hideAll(); document.getElementById("homeDiv").style.display="block"; }
+function qs(id){ return document.getElementById(id); }
 
+/* ---------- Cadastro ---------- */
 async function registerCorretor(){
-  const nome=document.getElementById("nome").value.trim();
-  const email=document.getElementById("email").value.trim();
-  const telefone=document.getElementById("telefone").value.trim();
-  const creci=document.getElementById("creci").value.trim();
-  const senha=document.getElementById("senha").value.trim();
-  if(!nome||!telefone||!creci||!senha){ alert("Preencha todos os campos obrigatórios!"); return; }
+  const nome = qs("nome").value.trim();
+  const email = qs("email").value.trim();
+  const telefone = qs("telefone").value.trim();
+  const creci = qs("creci").value.trim();
+  const senha = qs("senha").value.trim();
+  if(!nome || !telefone || !creci || !senha){ alert("Preencha os campos obrigatórios"); return; }
 
-  const res = await fetch(sheetUrl,{headers}); 
-  const data = await res.json();
-  if(data.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
+  // cria username simples
+  const username = nome.toLowerCase().replace(/\s+/g,"-");
 
-  await fetch(sheetUrl,{
-    method:"POST",
-    headers: headers,
-    body: JSON.stringify({nome,email,telefone,creci,senha,username:nome.toLowerCase()})
+  // checar duplicado na aba usuarios
+  const res = await fetch(SHEET_URL, { headers: HEADERS });
+  const rows = await res.json();
+
+  const usuarios = rows.filter(r => r.nome && r.email !== undefined && r.username !== undefined).map(r=>r);
+  if(usuarios.find(u => u.username === username || u.nome === nome)){ alert("Corretor já cadastrado com esse nome/username"); return; }
+
+  // postar novo usuário
+  await fetch(SHEET_URL, {
+    method: "POST",
+    headers: HEADERS,
+    body: JSON.stringify({
+      // gravamos na aba `usuarios` automaticamente pelo SheetBest se a planilha tiver essa aba.
+      nome, email, telefone, creci, senha, username
+    })
   });
 
-  document.getElementById("registerMsg").innerText="Corretor cadastrado com sucesso!";
-  document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${nome.toLowerCase()}`;
+  qs("registerMsg").innerText = "Corretor cadastrado com sucesso! Copie o link abaixo para enviar ao cliente.";
+  qs("linkCorretor").value = `${location.origin}${location.pathname}?user=${username}`;
 }
 
+/* ---------- Login ---------- */
 async function login(){
-  const username=document.getElementById("username").value.trim();
-  const password=document.getElementById("password").value.trim();
-  const res = await fetch(sheetUrl,{headers}); 
-  const data = await res.json();
-  const user = data.find(u=>u.username===username && u.senha===password);
-  if(user){
-    currentUser=user; hideAll(); document.getElementById("panelDiv").style.display="block";
-    document.getElementById("welcome").innerText=`Bem-vindo, ${user.nome}`;
-    document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${user.username}`;
-    loadImoveis(); loadSchedule();
-  } else { document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
+  qs("loginError").innerText = "";
+  const username = qs("username").value.trim();
+  const senha = qs("password").value.trim();
+  if(!username || !senha){ qs("loginError").innerText = "Informe usuário e senha"; return; }
+
+  const res = await fetch(SHEET_URL, { headers: HEADERS });
+  const rows = await res.json();
+  const usuarios = rows.filter(r => r.username && r.nome);
+
+  const user = usuarios.find(u => u.username === username && u.senha === senha);
+  if(!user){ qs("loginError").innerText = "Usuário ou senha incorretos"; return; }
+
+  currentUser = user;
+  hideAll();
+  qs("panelDiv").style.display = "block";
+  qs("welcome").innerText = `${user.nome} (${user.creci || ""})`;
+  qs("linkCorretor").value = `${location.origin}${location.pathname}?user=${user.username}`;
+
+  await loadImoveis();
+  await loadSchedule();
 }
 
-async function addOrUpdateImovel(){
-  const imovel=document.getElementById("imovel").value.trim();
-  if(!imovel){ alert("Informe o nome do imóvel!"); return; }
-  const preco=document.getElementById("preco").value.trim();
-  const endereco=document.getElementById("endereco").value.trim();
-  const site=document.getElementById("site").value.trim();
-  const descricao=document.getElementById("descricao").value.trim();
-  const fotos=[];
-  for(let i=1;i<=10;i++){ let val=document.getElementById(`foto${i}`).value.trim(); if(val) fotos.push(val); }
-  await fetch(sheetUrl,{
-    method:"POST",
-    headers: headers,
-    body: JSON.stringify({corretor:currentUser.username,imovel,preco,endereco,site,descricao,fotos:fotos.join(","),horarios:""})
+/* ---------- Logout ---------- */
+function logout(){
+  currentUser = null;
+  backHome();
+}
+
+/* ---------- Imóveis (CRUD simples) ---------- */
+async function addImovel(){
+  const imovel = qs("nomeImovel").value.trim();
+  if(!imovel){ alert("Nome do imóvel obrigatório"); return; }
+  const preco = qs("preco").value.trim();
+  const endereco = qs("endereco").value.trim();
+  const site = qs("site").value.trim();
+  const descricao = qs("descricao").value.trim();
+  const fotos = [];
+  for(let i=1;i<=10;i++){ const v = qs("foto"+i).value.trim(); if(v) fotos.push(v); }
+
+  // gravar na aba imoveis com campo corretor = username
+  await fetch(SHEET_URL, {
+    method: "POST",
+    headers: HEADERS,
+    body: JSON.stringify({
+      corretor: currentUser.username,
+      nome_imovel: imovel,
+      preco,
+      descricao,
+      endereco,
+      site,
+      foto1: fotos[0]||"",
+      foto2: fotos[1]||"",
+      foto3: fotos[2]||"",
+      foto4: fotos[3]||"",
+      foto5: fotos[4]||"",
+      foto6: fotos[5]||"",
+      foto7: fotos[6]||"",
+      foto8: fotos[7]||"",
+      foto9: fotos[8]||"",
+      foto10: fotos[9]||"",
+      horarios: "" // iniciamos sem horários
+    })
   });
-  alert("Imóvel adicionado/atualizado com sucesso!");
-  loadImoveis();
+
+  alert("Imóvel salvo!"); 
+  clearImovelForm();
+  await loadImoveis();
 }
 
+/* limpa form */
+function clearImovelForm(){
+  ["nomeImovel","preco","endereco","site","descricao",
+   "foto1","foto2","foto3","foto4","foto5","foto6","foto7","foto8","foto9","foto10"].forEach(id=>qs(id).value="");
+}
+
+/* carrega imóveis do corretor */
 async function loadImoveis(){
-  const res=await fetch(sheetUrl,{headers}); const data=await res.json();
-  const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
-  const container=document.getElementById("cardsContainer");
-  container.innerHTML="";
-  imoveis.forEach(i=>{
-    const card=document.createElement("div"); card.classList.add("card");
-    card.innerHTML=`<h3>${i.imovel}</h3><p>Preço: ${i.preco}</p><p>Endereço: ${i.endereco}</p><p>${i.descricao}</p>`;
-    if(i.fotos){ const imgs=i.fotos.split(","); const imgContainer=document.createElement("div"); imgs.forEach(src=>{ let img=document.createElement("img"); img.src=src; imgContainer.classList.add("img-container"); card.appendChild(imgContainer); imgContainer.appendChild(img); }); }
-    container.appendChild(card);
+  const res = await fetch(SHEET_URL, { headers: HEADERS });
+  const rows = await res.json();
+  // Filtrar apenas linhas da aba imoveis (temos que assumir que planilha tem abas; sheetbest retorna tudo - filtramos por campo 'corretor' e 'nome_imovel')
+  const imoveis = rows.filter(r => r.corretor === currentUser.username && r.nome_imovel);
+  const container = qs("cardsContainer");
+  container.innerHTML = "";
+  if(imoveis.length===0){ container.innerHTML = "<p class='small'>Você ainda não tem imóveis cadastrados.</p>"; return; }
+
+  imoveis.forEach(im => {
+    const c = document.createElement("div"); c.className = "card";
+    const fotos = [];
+    for(let i=1;i<=10;i++){ if(im["foto"+i]) fotos.push(im["foto"+i]); }
+    c.innerHTML = `<h3>${im.nome_imovel}</h3>
+                   <p class="small">Preço: ${im.preco || "-"}</p>
+                   <p class="small">Endereço: ${im.endereco || "-"}</p>
+                   <p class="small">${im.descricao || ""}</p>`;
+    if(fotos.length){
+      const imgWrap = document.createElement("div"); imgWrap.className = "img-container";
+      fotos.forEach(src => { const img = document.createElement("img"); img.src = src; img.style.width = "48%"; img.style.marginTop="8px"; imgWrap.appendChild(img); });
+      c.appendChild(imgWrap);
+    }
+
+    // editar / remover
+    const editBtn = document.createElement("button"); editBtn.className="edit-btn"; editBtn.textContent="Editar";
+    editBtn.onclick = ()=> editImovelPopulate(im);
+    c.appendChild(editBtn);
+
+    const removeBtn = document.createElement("button"); removeBtn.className="remove-btn"; removeBtn.textContent="Remover";
+    removeBtn.onclick = ()=> removeImovel(im);
+    c.appendChild(removeBtn);
+
+    container.appendChild(c);
   });
 }
 
+/* preencher formulário para editar */
+function editImovelPopulate(im){
+  // armazenamos o objeto selecionado no currentImovel para atualizar depois
+  currentImovel = im;
+  qs("nomeImovel").value = im.nome_imovel || "";
+  qs("preco").value = im.preco || "";
+  qs("endereco").value = im.endereco || "";
+  qs("site").value = im.site || "";
+  qs("descricao").value = im.descricao || "";
+  for(let i=1;i<=10;i++){ qs("foto"+i).value = im["foto"+i] || ""; }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* remove imovel (DELETE) */
+async function removeImovel(im){
+  if(!confirm("Remover imóvel? Esta ação apaga o registro.")) return;
+  // SheetBest normalmente fornece _id em cada linha; identificamos e chamamos DELETE para sheetUrl/id
+  if(!im._id){ alert("Não foi possível identificar o registro para remoção."); return; }
+  await fetch(`${SHEET_URL}/${im._id}`, { method: "DELETE", headers: HEADERS });
+  await loadImoveis();
+}
+
+/* atualizar imovel (se currentImovel estiver setado) */
+async function updateImovel(){
+  if(!currentImovel || !currentImovel._id){ alert("Nenhum imóvel selecionado para atualização."); return; }
+  const imovel = qs("nomeImovel").value.trim();
+  if(!imovel){ alert("Nome do imóvel obrigatório."); return; }
+  const preco = qs("preco").value.trim();
+  const endereco = qs("endereco").value.trim();
+  const site = qs("site").value.trim();
+  const descricao = qs("descricao").value.trim();
+  const fotos = [];
+  for(let i=1;i<=10;i++) fotos.push(qs("foto"+i).value.trim() || "");
+  // montar objeto atualizado (mantendo campo corretor)
+  const updated = {
+    ...currentImovel,
+    nome_imovel: imovel, preco, endereco, site, descricao,
+    foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3], foto5: fotos[4],
+    foto6: fotos[5], foto7: fotos[6], foto8: fotos[7], foto9: fotos[8], foto10: fotos[9]
+  };
+  await fetch(`${SHEET_URL}/${currentImovel._id}`, { method: "PUT", headers: HEADERS, body: JSON.stringify(updated) });
+  alert("Imóvel atualizado!");
+  currentImovel = null;
+  clearImovelForm();
+  await loadImoveis();
+}
+
+/* ---------- Horários: corretor define bloqueios pessoais ---------- */
 async function loadSchedule(){
-  const container=document.getElementById("scheduleContainer");
-  container.innerHTML="";
-  const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-  dias.forEach(d=>{
-    const slot=document.createElement("div"); slot.classList.add("slot","available"); slot.innerText=d;
-    slot.onclick=async ()=>{
-      if(slot.classList.contains("available")){slot.classList.remove("available");slot.classList.add("personal");} 
-      else if(slot.classList.contains("personal")){slot.classList.remove("personal");slot.classList.add("available");}
-      const data = await fetch(sheetUrl,{headers}).then(res=>res.json());
-      const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
-      if(imoveis.length>0){
-        const imovel = imoveis[0];
-        let horarios = imovel.horarios?imovel.horarios.split(","):[];
-        horarios.includes(d)?horarios.splice(horarios.indexOf(d),1):horarios.push(d);
-        await fetch(sheetUrl,{method:"PUT",headers,body:JSON.stringify({...imovel,horarios:horarios.join(",")})});
-      }
+  const container = qs("scheduleContainer");
+  container.innerHTML = "";
+  const dias = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+  // Pegamos primeiro imóvel (ou nenhum) — aqui definimos horários por imóvel; se quiser horários gerais por corretor, podemos adaptar.
+  const res = await fetch(SHEET_URL, { headers: HEADERS });
+  const rows = await res.json();
+  const imoveis = rows.filter(r => r.corretor === currentUser.username && r.nome_imovel);
+  // se não há imóveis, avisamos
+  if(imoveis.length === 0){ container.innerHTML = "<p class='small'>Cadastre um imóvel para configurar horários.</p>"; return; }
+  // para simplicidade, vamos gerenciar horários do primeiro imóvel (pode ser adaptado em seguida)
+  const im = imoveis[0];
+  const horarios = im.horarios ? im.horarios.split(",").filter(h=>h) : [];
+
+  dias.forEach(d => {
+    const slot = document.createElement("div");
+    slot.className = "slot " + (horarios.includes(d) ? "personal" : "available");
+    slot.innerText = d;
+    slot.onclick = async () => {
+      // alterna bloqueio pessoal (personal) e disponível
+      let h = horarios.slice();
+      if(h.includes(d)){ h.splice(h.indexOf(d),1); slot.className = "slot available"; }
+      else { h.push(d); slot.className = "slot personal"; }
+      // atualiza a planilha: PUT para o registro do imovel
+      const updated = {...im, horarios: h.join(",")};
+      await fetch(`${SHEET_URL}/${im._id}`, { method: "PUT", headers: HEADERS, body: JSON.stringify(updated) });
+      // recarrega lista de imóveis (para refletir)
+      await loadImoveis();
     };
     container.appendChild(slot);
   });
 }
 
-// ---------- Cliente via link com agendamento ----------
-window.onload=function(){
-  const params=new URLSearchParams(window.location.search);
-  const user=params.get("user");
-  if(user){
-    hideAll();
-    document.getElementById("clientDiv").style.display="block";
-    const clientCards=document.getElementById("clientCards");
-    const clientSchedule=document.getElementById("clientSchedule");
-    clientCards.innerHTML="Carregando imóveis...";
-    fetch(sheetUrl,{headers}).then(res=>res.json()).then(data=>{
-      const imoveis = data.filter(i=>i.corretor===user && i.imovel);
-      clientCards.innerHTML="";
-      clientSchedule.innerHTML="";
-      imoveis.forEach(i=>{
-        const card=document.createElement("div"); card.classList.add("card");
-        card.innerHTML=`<h3>${i.imovel}</h3><p>Preço: ${i.preco}</p><p>Endereço: ${i.endereco}</p><p>${i.descricao}</p>`;
-        if(i.fotos){ const imgs=i.fotos.split(","); const imgContainer=document.createElement("div"); imgs.forEach(src=>{ let img=document.createElement("img"); img.src=src; imgContainer.classList.add("img-container"); card.appendChild(imgContainer); imgContainer.appendChild(img); }); }
-        clientCards.appendChild(card);
+/* ---------- CLIENTE: ver imoveis e agendar ---------- */
+async function clientLoadFor(user){
+  // user = username do corretor
+  const res = await fetch(SHEET_URL, { headers: HEADERS });
+  const rows = await res.json();
+  const imoveis = rows.filter(r => r.corretor === user && r.nome_imovel);
+  const cards = qs("clientCards");
+  cards.innerHTML = "";
+  if(imoveis.length===0){ cards.innerHTML = "<p class='small'>Nenhum imóvel encontrado para este corretor.</p>"; return; }
 
-        // Horários do imóvel
-        const scheduleDiv=document.createElement("div"); scheduleDiv.classList.add("schedule");
-        const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-        dias.forEach(d=>{
-          const slot=document.createElement("div"); 
-          let horarios=i.horarios?i.horarios.split(","):[];
-          slot.classList.add("slot", horarios.includes(d)?"occupied":"available");
-          slot.innerText=d;
-          slot.onclick=async ()=>{
-            if(slot.classList.contains("available")){
-              slot.classList.remove("available"); slot.classList.add("occupied");
-              horarios.push(d);
-              await fetch(sheetUrl,{method:"PUT",headers,body:JSON.stringify({...i,horarios:horarios.join(",")})});
-              loadImoveis();
-            }
-          };
-          scheduleDiv.appendChild(slot);
-        });
-        clientCards.appendChild(scheduleDiv);
+  // mostramos cada imóvel e sua grade de horários; cliente clica em um horário disponível (não personal nem occupied) para reservar
+  imoveis.forEach(im => {
+    const c = document.createElement("div"); c.className = "card";
+    c.innerHTML = `<h3>${im.nome_imovel}</h3><p class="small">Preço: ${im.preco || "-"}</p><p class="small">${im.endereco || "-"}</p><p class="small">${im.descricao || ""}</p>`;
+    if(im.foto1 || im.foto2){
+      const imgWrap = document.createElement("div"); imgWrap.className = "img-container";
+      [im.foto1,im.foto2,im.foto3,im.foto4,im.foto5,im.foto6,im.foto7,im.foto8,im.foto9,im.foto10].forEach(src=>{
+        if(src){ const img = document.createElement("img"); img.src = src; img.style.width="48%"; img.style.marginTop="8px"; imgWrap.appendChild(img); }
       });
+      c.appendChild(imgWrap);
+    }
+
+    // schedule for this imovel
+    const scheduleDiv = document.createElement("div"); scheduleDiv.className = "schedule";
+    const dias = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+    const horarios = im.horarios ? im.horarios.split(",").filter(h=>h) : [];
+    dias.forEach(d=>{
+      const slot = document.createElement("div");
+      // se está bloqueado pelo corretor: personal
+      if(horarios.includes(d)){
+        slot.className = "slot occupied"; // treat both blocked/personal/occupied as unavailable to client (color red)
+        slot.innerText = d;
+      } else {
+        slot.className = "slot available";
+        slot.innerText = d;
+        slot.onclick = async ()=>{
+          // reservar: marcamos no im.horarios como ocupado
+          const newHorarios = horarios.slice();
+          newHorarios.push(d);
+          const updated = {...im, horarios: newHorarios.join(",")};
+          // PUT para atualizar este imovel via _id
+          if(!im._id){ alert("Registro sem _id — não foi possível agendar."); return; }
+          await fetch(`${SHEET_URL}/${im._id}`, { method: "PUT", headers: HEADERS, body: JSON.stringify(updated) });
+          alert("Agendado! O horário agora aparece como ocupado.");
+          // atualizar visualizações: recarrega cliente e, se o corretor estiver logado, recarrega o painel
+          await clientLoadFor(user);
+          if(currentUser && currentUser.username === user){ await loadImoveis(); await loadSchedule(); }
+        };
+      }
+      scheduleDiv.appendChild(slot);
     });
-  }
+
+    c.appendChild(scheduleDiv);
+    cards.appendChild(c);
+  });
 }
+
+/* ---------- remover eventual confusão de eventos duplicados ---------- */
+/* Ao carregar a página, se houver ?user=xxxx, abrimos o painel cliente correspondente. */
+window.addEventListener("load", async ()=>{
+  const p = new URLSearchParams(window.location.search);
+  const u = p.get("user");
+  if(u){
+    hideAll();
+    qs("clientDiv").style.display = "block";
+    qs("clientCards").innerHTML = "Carregando...";
+    await clientLoadFor(u);
+  } else {
+    backHome();
+  }
+});
+
+/* ---------- expose functions used by buttons ---------- */
+window.registerCorretor = registerCorretor;
+window.showRegister = showRegister;
+window.showLogin = showLogin;
+window.showClient = showClient;
+window.backHome = backHome;
+window.login = login;
+window.addImovel = addImovel;
+window.loadImoveis = loadImoveis;
+window.loadSchedule = loadSchedule;
+window.clientLoadFor = clientLoadFor;
+window.logout = logout;
+window.clearImovelForm = clearImovelForm;
+window.updateImovel = updateImovel;
+window.removeImovel = removeImovel;
+window.editImovelPopulate = editImovelPopulate;
 </script>
 </body>
 </html>
