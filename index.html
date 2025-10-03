@@ -106,7 +106,7 @@ h1,h2{text-align:center;margin-bottom:20px;}
 </div>
 
 <script>
-const sheetUrl = "https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
+const sheetUrl="https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
 let currentUser=null;
 
 // ---------- Navegação ----------
@@ -125,7 +125,8 @@ async function registerCorretor(){
   const senha=document.getElementById("senha").value.trim();
   if(!nome||!telefone||!creci||!senha){ alert("Preencha todos os campos obrigatórios!"); return; }
 
-  const res = await fetch(sheetUrl); const data = await res.json();
+  const res = await fetch(sheetUrl); 
+  const data = await res.json();
   if(data.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
 
   await fetch(sheetUrl,{
@@ -142,7 +143,8 @@ async function registerCorretor(){
 async function login(){
   const username=document.getElementById("username").value.trim();
   const password=document.getElementById("password").value.trim();
-  const res = await fetch(sheetUrl); const data = await res.json();
+  const res = await fetch(sheetUrl); 
+  const data = await res.json();
   const user = data.find(u=>u.username===username && u.senha===password);
   if(user){
     currentUser=user; hideAll(); document.getElementById("panelDiv").style.display="block";
@@ -156,18 +158,55 @@ async function login(){
 async function addOrUpdateImovel(){
   const imovel=document.getElementById("imovel").value.trim();
   if(!imovel){ alert("Informe o nome do imóvel!"); return; }
-  // Aqui você faria a integração para criar/atualizar imóvel na planilha
-  alert("Imóvel adicionado/atualizado (precisa configurar SheetBest)!"); 
+
+  // Pegando dados do imóvel
+  const preco=document.getElementById("preco").value.trim();
+  const endereco=document.getElementById("endereco").value.trim();
+  const site=document.getElementById("site").value.trim();
+  const descricao=document.getElementById("descricao").value.trim();
+  const fotos=[];
+  for(let i=1;i<=10;i++){ let val=document.getElementById(`foto${i}`).value.trim(); if(val) fotos.push(val); }
+
+  // Enviar para Sheet Best
+  await fetch(sheetUrl,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({corretor:currentUser.username,imovel,preco,endereco,site,descricao,fotos:fotos.join(",")})
+  });
+
+  alert("Imóvel adicionado/atualizado com sucesso!");
+  loadImoveis();
 }
 
 // ---------- Carregar Imóveis ----------
-function loadImoveis(){ document.getElementById("cardsContainer").innerHTML="(Aqui aparecerão os imóveis do corretor)"; }
+async function loadImoveis(){
+  const res=await fetch(sheetUrl); const data=await res.json();
+  const imoveis = data.filter(i=>i.corretor===currentUser.username);
+  const container=document.getElementById("cardsContainer");
+  container.innerHTML="";
+  imoveis.forEach(i=>{
+    const card=document.createElement("div"); card.classList.add("card");
+    card.innerHTML=`<h3>${i.imovel}</h3><p>Preço: ${i.preco}</p><p>Endereço: ${i.endereco}</p><p>${i.descricao}</p>`;
+    if(i.fotos){ const imgs=i.fotos.split(","); const imgContainer=document.createElement("div"); imgContainer.classList.add("img-container"); imgs.forEach(src=>{ let img=document.createElement("img"); img.src=src; imgContainer.appendChild(img); }); card.appendChild(imgContainer);}
+    container.appendChild(card);
+  });
+}
 
 // ---------- Quadro de horários ----------
-function loadSchedule(){
-  const container=document.getElementById("scheduleContainer"); container.innerHTML="";
+async function loadSchedule(){
+  const container=document.getElementById("scheduleContainer");
+  container.innerHTML="";
   const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
-  for(let i=0;i<7;i++){ const slot=document.createElement("div"); slot.classList.add("slot","available"); slot.innerText=dias[i]; container.appendChild(slot); }
+  dias.forEach(d=>{
+    const slot=document.createElement("div"); slot.classList.add("slot","available"); slot.innerText=d;
+    slot.onclick=async ()=>{
+      if(slot.classList.contains("available")){slot.classList.remove("available");slot.classList.add("occupied");} 
+      else if(slot.classList.contains("occupied")){slot.classList.remove("occupied");slot.classList.add("personal");} 
+      else{slot.classList.remove("personal");slot.classList.add("available");}
+      // Aqui você pode integrar o status do horário na Sheet Best
+    };
+    container.appendChild(slot);
+  });
 }
 
 // ---------- Cliente via link ----------
