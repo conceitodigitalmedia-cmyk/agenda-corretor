@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corretor - Full</title>
+<title>Agenda Corretor - Full Ultra</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
 body{background:#121212;color:#fff;padding:20px;min-height:100vh;}
@@ -69,7 +69,7 @@ h1,h2{text-align:center;margin-bottom:20px;}
 </div>
 
 <div id="panelDiv">
-  <h1>Painel do Corretor</h1>
+  <h1>Bem-vindo à Agenda do Corretor</h1>
   <h2 class="welcome" id="welcome"></h2>
 
   <div class="form-imovel">
@@ -158,22 +158,17 @@ async function login(){
 async function addOrUpdateImovel(){
   const imovel=document.getElementById("imovel").value.trim();
   if(!imovel){ alert("Informe o nome do imóvel!"); return; }
-
-  // Pegando dados do imóvel
   const preco=document.getElementById("preco").value.trim();
   const endereco=document.getElementById("endereco").value.trim();
   const site=document.getElementById("site").value.trim();
   const descricao=document.getElementById("descricao").value.trim();
   const fotos=[];
   for(let i=1;i<=10;i++){ let val=document.getElementById(`foto${i}`).value.trim(); if(val) fotos.push(val); }
-
-  // Enviar para Sheet Best
   await fetch(sheetUrl,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({corretor:currentUser.username,imovel,preco,endereco,site,descricao,fotos:fotos.join(",")})
   });
-
   alert("Imóvel adicionado/atualizado com sucesso!");
   loadImoveis();
 }
@@ -181,7 +176,7 @@ async function addOrUpdateImovel(){
 // ---------- Carregar Imóveis ----------
 async function loadImoveis(){
   const res=await fetch(sheetUrl); const data=await res.json();
-  const imoveis = data.filter(i=>i.corretor===currentUser.username);
+  const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
   const container=document.getElementById("cardsContainer");
   container.innerHTML="";
   imoveis.forEach(i=>{
@@ -192,7 +187,7 @@ async function loadImoveis(){
   });
 }
 
-// ---------- Quadro de horários ----------
+// ---------- Quadro de horários (interativo) ----------
 async function loadSchedule(){
   const container=document.getElementById("scheduleContainer");
   container.innerHTML="";
@@ -203,7 +198,7 @@ async function loadSchedule(){
       if(slot.classList.contains("available")){slot.classList.remove("available");slot.classList.add("occupied");} 
       else if(slot.classList.contains("occupied")){slot.classList.remove("occupied");slot.classList.add("personal");} 
       else{slot.classList.remove("personal");slot.classList.add("available");}
-      // Aqui você pode integrar o status do horário na Sheet Best
+      // Aqui você pode integrar status do horário na Sheet Best
     };
     container.appendChild(slot);
   });
