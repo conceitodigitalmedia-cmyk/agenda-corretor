@@ -3,229 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel do Corretor</title>
+<title>Agenda Corretor - Completo</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-  body { background-color: #121212; color: #fff; padding: 20px; min-height: 100vh; }
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
+body{background:#121212;color:#fff;padding:20px;min-height:100vh;}
+h1,h2{text-align:center;margin-bottom:20px;}
 
-  h1, h2 { text-align: center; margin-bottom: 20px; }
+/* Tela Inicial */
+#homeDiv{max-width:500px;margin:50px auto;text-align:center;}
+#homeDiv button{width:80%;margin:10px;padding:15px;border:none;border-radius:8px;font-size:1em;cursor:pointer;background:#ff3399;color:#fff;transition:.3s;}
+#homeDiv button:hover{background:#ff66b3;}
 
-  /* Login */
-  .login-box {
-    max-width: 400px;
-    margin: 50px auto;
-    background-color: #1e1e1e;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255, 0, 128, 0.3);
-  }
-  .login-box input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border: none;
-    background-color: #2c2c2c;
-    color: #fff;
-  }
-  .login-box button {
-    width: 100%;
-    padding: 12px;
-    background-color: #ff3399;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .login-box button:hover { background-color: #ff66b3; }
+/* Login / Cadastrar Corretor */
+.box{max-width:400px;margin:50px auto;background:#1e1e1e;padding:30px;border-radius:10px;box-shadow:0 0 20px rgba(255,0,128,0.3);}
+.box input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#2c2c2c;color:#fff;}
+.box button{width:100%;padding:12px;border:none;border-radius:6px;background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
+.box button:hover{background:#ff66b3;}
 
-  /* Painel */
-  #panelDiv { display: none; }
-  .welcome { text-align: center; margin-bottom: 20px; color: #ff66b3; font-size: 1.2em; }
+/* Painel Corretor */
+#panelDiv,#clientDiv,#registerDiv{display:none;}
+.welcome{text-align:center;margin-bottom:20px;color:#ff66b3;font-size:1.2em;}
+.form-imovel,.form-schedule{max-width:700px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap;}
+.form-imovel input,.form-imovel textarea,.form-imovel button,.form-schedule input,.form-schedule button{flex:1 1 150px;padding:10px;border-radius:6px;border:none;}
+.form-imovel textarea{flex-basis:100%;background:#2c2c2c;color:#fff;resize:none;}
+.form-imovel button,.form-schedule button{background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
+.form-imovel button:hover,.form-schedule button:hover{background:#ff66b3;}
 
-  /* Form de adição */
-  .form-container {
-    max-width: 700px;
-    margin: 20px auto;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .form-container input, .form-container button {
-    flex: 1 1 150px;
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-  }
-  .form-container input { background-color: #2c2c2c; color: #fff; }
-  .form-container button { background-color: #ff3399; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; }
-  .form-container button:hover { background-color: #ff66b3; }
+/* Cards de Imóveis */
+.cards-container{max-width:1000px;margin:30px auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;}
+.card{background:#1e1e1e;padding:20px;border-radius:10px;border:2px solid #ff3399;transition:.3s;position:relative;}
+.card:hover{border-color:#ff66b3;transform:translateY(-5px);}
+.card h3{color:#ff66b3;margin-bottom:10px;}
+.card p{margin:5px 0;}
+.edit-btn,.remove-btn{position:absolute;top:10px;padding:5px 8px;border:none;border-radius:6px;cursor:pointer;transition:.3s;color:#fff;}
+.edit-btn{right:50px;background:#3399ff;}
+.edit-btn:hover{background:#66b3ff;}
+.remove-btn{right:10px;background:#ff3333;}
+.remove-btn:hover{background:#ff6666;}
 
-  /* Cards de agendamento */
-  .cards-container {
-    max-width: 1000px;
-    margin: 30px auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  .card {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    border: 2px solid #ff3399;
-    transition: 0.3s;
-    position: relative;
-  }
-  .card:hover { border-color: #ff66b3; transform: translateY(-5px); }
-  .card h3 { color: #ff66b3; margin-bottom: 10px; }
-  .card p { margin: 5px 0; }
-  .remove-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #ff3333;
-    border: none;
-    color: #fff;
-    padding: 5px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .remove-btn:hover { background-color: #ff6666; }
+/* Quadro de horários */
+.schedule{max-width:700px;margin:20px auto;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;}
+.slot{padding:10px;border-radius:6px;cursor:pointer;}
+.available{background:#4caf50;}
+.occupied{background:#f44336;}
+.personal{background:#ff9800;}
+
+/* Fotos */
+.img-container{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.img-container img{width:48%;border-radius:6px;}
 </style>
 </head>
 <body>
 
-<div id="loginDiv" class="login-box">
-  <h2>Login do Corretor</h2>
-  <input type="text" id="username" placeholder="Nome de usuário" />
-  <input type="password" id="password" placeholder="Senha" />
-  <button onclick="login()">Entrar</button>
-  <p id="loginError" style="color:red; text-align:center;"></p>
+<!-- Tela Inicial -->
+<div id="homeDiv">
+  <h1>Agenda Corretor</h1>
+  <button onclick="showLogin()">Login Corretor</button>
+  <button onclick="showRegister()">Cadastrar Corretor</button>
+  <button onclick="showClient()">Acesso Cliente</button>
 </div>
 
+<!-- Login Corretor -->
+<div id="loginDiv" class="box">
+  <h2>Login do Corretor</h2>
+  <input type="text" id="username" placeholder="Nome de usuário">
+  <input type="password" id="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <p id="loginError" style="color:red;text-align:center;"></p>
+</div>
+
+<!-- Cadastrar Corretor -->
+<div id="registerDiv" class="box">
+  <h2>Cadastrar Corretor</h2>
+  <input type="text" id="newUser" placeholder="Nome de usuário">
+  <input type="text" id="displayName" placeholder="Nome para exibição">
+  <input type="password" id="newPass" placeholder="Senha">
+  <button onclick="registerCorretor()">Cadastrar</button>
+  <button onclick="backHome()">Voltar</button>
+  <p id="registerMsg" style="color:green;text-align:center;"></p>
+</div>
+
+<!-- Painel Corretor -->
 <div id="panelDiv">
   <h1>Painel do Corretor</h1>
   <h2 class="welcome" id="welcome"></h2>
 
-  <div class="form-container">
-    <input type="text" id="imovel" placeholder="Nome do imóvel" />
-    <input type="date" id="data" />
-    <input type="time" id="hora" />
-    <button onclick="addAppointment()">Adicionar</button>
+  <!-- Form Imóvel -->
+  <div class="form-imovel">
+    <input type="text" id="imovel" placeholder="Nome do imóvel">
+    <input type="text" id="preco" placeholder="Preço">
+    <input type="text" id="endereco" placeholder="Endereço / Cidade">
+    <input type="text" id="site" placeholder="Site do imóvel">
+    <textarea id="descricao" placeholder="Descrição"></textarea>
+    <input type="text" id="foto1" placeholder="Link Foto 1">
+    <input type="text" id="foto2" placeholder="Link Foto 2">
+    <input type="text" id="foto3" placeholder="Link Foto 3">
+    <input type="text" id="foto4" placeholder="Link Foto 4">
+    <input type="text" id="foto5" placeholder="Link Foto 5">
+    <input type="text" id="foto6" placeholder="Link Foto 6">
+    <input type="text" id="foto7" placeholder="Link Foto 7">
+    <input type="text" id="foto8" placeholder="Link Foto 8">
+    <input type="text" id="foto9" placeholder="Link Foto 9">
+    <input type="text" id="foto10" placeholder="Link Foto 10">
+    <button onclick="addOrUpdateImovel()">Adicionar/Atualizar Imóvel</button>
   </div>
 
-  <div class="cards-container" id="cardsContainer">
-    <!-- Cards de agendamento aparecerão aqui -->
-  </div>
+  <!-- Cards de Imóveis -->
+  <div class="cards-container" id="cardsContainer"></div>
+
+  <!-- Quadro de horários -->
+  <div class="schedule" id="scheduleContainer"></div>
+</div>
+
+<!-- Painel Cliente -->
+<div id="clientDiv">
+  <h1>Painel Cliente</h1>
+  <div class="cards-container" id="clientCards"></div>
 </div>
 
 <script>
 const sheetUrl = "https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
 
-// Corretores cadastrados
-const users = [
-  { username: "marcos", password: "123456", displayName: "Marcos Greijo" },
-  { username: "joao", password: "abc123", displayName: "João Silva" }
+// Corretores
+let users = [
+  { username:"marcos", password:"123456", displayName:"Marcos Greijo" }
 ];
-
 let currentUser = null;
 
-// Login
-function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const user = users.find(u => u.username === username && u.password === password);
-  if(user) {
-    currentUser = user;
-    document.getElementById("loginDiv").style.display = "none";
-    document.getElementById("panelDiv").style.display = "block";
-    document.getElementById("welcome").innerText = `Bem-vindo, ${user.displayName}`;
-    loadAppointments();
-  } else {
-    document.getElementById("loginError").innerText = "Usuário ou senha incorretos!";
+// ---------- Navegação ----------
+function showLogin(){ hideAll(); document.getElementById("loginDiv").style.display="block"; }
+function showRegister(){ hideAll(); document.getElementById("registerDiv").style.display="block"; }
+function showClient(){ hideAll(); document.getElementById("clientDiv").style.display="block"; }
+function hideAll(){ document.getElementById("homeDiv").style.display="none"; document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="none"; document.getElementById("panelDiv").style.display="none"; document.getElementById("clientDiv").style.display="none";}
+function backHome(){ hideAll(); document.getElementById("homeDiv").style.display="block"; }
+
+// ---------- Login ----------
+function login(){
+  const username=document.getElementById("username").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const user = users.find(u=>u.username===username && u.password===password);
+  if(user){
+    currentUser=user;
+    hideAll();
+    document.getElementById("panelDiv").style.display="block";
+    document.getElementById("welcome").innerText=`Bem-vindo, ${user.displayName}`;
+    loadImoveis();
+    loadSchedule();
+  }else{ document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
+}
+
+// ---------- Cadastrar Corretor ----------
+function registerCorretor(){
+  const u=document.getElementById("newUser").value.trim();
+  const d=document.getElementById("displayName").value.trim();
+  const p=document.getElementById("newPass").value.trim();
+  if(!u||!d||!p){ alert("Preencha todos os campos!"); return; }
+  if(users.find(x=>x.username===u)){ alert("Usuário já existe!"); return; }
+  users.push({username:u,displayName:d,password:p});
+  document.getElementById("registerMsg").innerText="Corretor cadastrado com sucesso!";
+}
+
+// ---------- Adicionar/Atualizar Imóvel ----------
+function addOrUpdateImovel(){
+  const imovel=document.getElementById("imovel").value.trim();
+  if(!imovel){ alert("Informe o nome do imóvel!"); return; }
+  // Aqui você integra com SheetBest para criar ou atualizar o imóvel
+  alert("Imóvel adicionado/atualizado (integração SheetBest ainda precisa configurar)!");
+}
+
+// ---------- Carregar Imóveis ----------
+function loadImoveis(){
+  document.getElementById("cardsContainer").innerHTML="(Aqui aparecerão os imóveis do corretor)";
+}
+
+// ---------- Quadro de horários ----------
+function loadSchedule(){
+  const container=document.getElementById("scheduleContainer");
+  container.innerHTML="";
+  const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+  for(let i=0;i<7;i++){
+    const slot=document.createElement("div");
+    slot.classList.add("slot","available");
+    slot.innerText=dias[i];
+    container.appendChild(slot);
   }
 }
-
-// Carrega agendamentos do corretor
-function loadAppointments() {
-  fetch(sheetUrl)
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById("cardsContainer");
-      container.innerHTML = "";
-      const myAppointments = data.filter(row => row.Corretor === currentUser.username);
-      myAppointments.forEach(row => {
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.innerHTML = `
-          <h3>${row.Imovel || ''}</h3>
-          <p><strong>Data:</strong> ${row.Data || ''}</p>
-          <p><strong>Hora:</strong> ${row.Hora || ''}</p>
-          <button class="remove-btn" onclick="removeAppointment('${row._id}')">Remover</button>
-        `;
-        container.appendChild(card);
-      });
-    })
-    .catch(err => console.error("Erro ao carregar agenda:", err));
-}
-
-// Adiciona novo agendamento com verificação de duplicado
-function addAppointment() {
-  const imovel = document.getElementById("imovel").value.trim();
-  const data = document.getElementById("data").value;
-  const hora = document.getElementById("hora").value;
-
-  if(!imovel || !data || !hora) { alert("Preencha todos os campos!"); return; }
-
-  // Verifica se já existe agendamento igual
-  fetch(sheetUrl)
-    .then(res => res.json())
-    .then(data => {
-      const duplicate = data.find(row => 
-        row.Corretor === currentUser.username && 
-        row.Imovel === imovel && 
-        row.Data === data && 
-        row.Hora === hora
-      );
-      if(duplicate) {
-        alert("Já existe um agendamento neste horário para este imóvel!");
-        return;
-      }
-
-      // Adiciona
-      fetch(sheetUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          Corretor: currentUser.username,
-          Imovel: imovel,
-          Data: data,
-          Hora: hora
-        })
-      })
-      .then(res => res.json())
-      .then(() => {
-        document.getElementById("imovel").value = "";
-        document.getElementById("data").value = "";
-        document.getElementById("hora").value = "";
-        loadAppointments();
-      })
-      .catch(err => console.error("Erro ao adicionar agendamento:", err));
-    });
-}
-
-// Remove agendamento
-function removeAppointment(id) {
-  fetch(`${sheetUrl}/${id}`, { method: "DELETE" })
-    .then(res => res.json())
-    .then(() => loadAppointments())
-    .catch(err => console.error("Erro ao remover agendamento:", err));
-}
 </script>
-
 </body>
 </html>
