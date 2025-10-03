@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corretor - Definitiva</title>
+<title>Agenda Corretor - Final</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
 body{background:#121212;color:#fff;padding:20px;min-height:100vh;}
@@ -110,18 +110,16 @@ h1,h2{text-align:center;margin-bottom:20px;}
 const sheetUrl="https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
 const headers = {
   "Content-Type": "application/json",
-  "Authorization": "S@r@kOI_%lZFzQd!d7@bkSdQw#$oI9cdB57yarmlf_Z$0i3H29BzpamszZeZdK2n"
+  "X-Api-Key": "S@r@kOI_%lZFzQd!d7@bkSdQw#$oI9cdB57yarmlf_Z$0i3H29BzpamszZeZdK2n"
 };
 let currentUser=null;
 
-// ---------- Navegação ----------
 function showLogin(){ hideAll(); document.getElementById("loginDiv").style.display="block"; }
 function showRegister(){ hideAll(); document.getElementById("registerDiv").style.display="block"; }
 function showClient(){ hideAll(); document.getElementById("clientDiv").style.display="block"; }
 function hideAll(){ document.getElementById("homeDiv").style.display="none"; document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="none"; document.getElementById("panelDiv").style.display="none"; document.getElementById("clientDiv").style.display="none";}
 function backHome(){ hideAll(); document.getElementById("homeDiv").style.display="block"; }
 
-// ---------- Cadastro ----------
 async function registerCorretor(){
   const nome=document.getElementById("nome").value.trim();
   const email=document.getElementById("email").value.trim();
@@ -144,7 +142,6 @@ async function registerCorretor(){
   document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${nome.toLowerCase()}`;
 }
 
-// ---------- Login ----------
 async function login(){
   const username=document.getElementById("username").value.trim();
   const password=document.getElementById("password").value.trim();
@@ -159,7 +156,6 @@ async function login(){
   } else { document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
 }
 
-// ---------- Adicionar/Editar Imóveis ----------
 async function addOrUpdateImovel(){
   const imovel=document.getElementById("imovel").value.trim();
   if(!imovel){ alert("Informe o nome do imóvel!"); return; }
@@ -178,7 +174,6 @@ async function addOrUpdateImovel(){
   loadImoveis();
 }
 
-// ---------- Carregar Imóveis ----------
 async function loadImoveis(){
   const res=await fetch(sheetUrl,{headers}); const data=await res.json();
   const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
@@ -192,7 +187,6 @@ async function loadImoveis(){
   });
 }
 
-// ---------- Quadro de horários ----------
 async function loadSchedule(){
   const container=document.getElementById("scheduleContainer");
   container.innerHTML="";
@@ -202,7 +196,6 @@ async function loadSchedule(){
     slot.onclick=async ()=>{
       if(slot.classList.contains("available")){slot.classList.remove("available");slot.classList.add("personal");} 
       else if(slot.classList.contains("personal")){slot.classList.remove("personal");slot.classList.add("available");}
-      // Atualizar horário na planilha
       const data = await fetch(sheetUrl,{headers}).then(res=>res.json());
       const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
       if(imoveis.length>0){
@@ -216,23 +209,45 @@ async function loadSchedule(){
   });
 }
 
-// ---------- Cliente via link ----------
+// ---------- Cliente via link com agendamento ----------
 window.onload=function(){
   const params=new URLSearchParams(window.location.search);
   const user=params.get("user");
   if(user){
     hideAll();
     document.getElementById("clientDiv").style.display="block";
-    document.getElementById("clientCards").innerHTML="Carregando imóveis...";
+    const clientCards=document.getElementById("clientCards");
+    const clientSchedule=document.getElementById("clientSchedule");
+    clientCards.innerHTML="Carregando imóveis...";
     fetch(sheetUrl,{headers}).then(res=>res.json()).then(data=>{
       const imoveis = data.filter(i=>i.corretor===user && i.imovel);
-      const container=document.getElementById("clientCards");
-      container.innerHTML="";
+      clientCards.innerHTML="";
+      clientSchedule.innerHTML="";
       imoveis.forEach(i=>{
         const card=document.createElement("div"); card.classList.add("card");
         card.innerHTML=`<h3>${i.imovel}</h3><p>Preço: ${i.preco}</p><p>Endereço: ${i.endereco}</p><p>${i.descricao}</p>`;
         if(i.fotos){ const imgs=i.fotos.split(","); const imgContainer=document.createElement("div"); imgs.forEach(src=>{ let img=document.createElement("img"); img.src=src; imgContainer.classList.add("img-container"); card.appendChild(imgContainer); imgContainer.appendChild(img); }); }
-        container.appendChild(card);
+        clientCards.appendChild(card);
+
+        // Horários do imóvel
+        const scheduleDiv=document.createElement("div"); scheduleDiv.classList.add("schedule");
+        const dias=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+        dias.forEach(d=>{
+          const slot=document.createElement("div"); 
+          let horarios=i.horarios?i.horarios.split(","):[];
+          slot.classList.add("slot", horarios.includes(d)?"occupied":"available");
+          slot.innerText=d;
+          slot.onclick=async ()=>{
+            if(slot.classList.contains("available")){
+              slot.classList.remove("available"); slot.classList.add("occupied");
+              horarios.push(d);
+              await fetch(sheetUrl,{method:"PUT",headers,body:JSON.stringify({...i,horarios:horarios.join(",")})});
+              loadImoveis();
+            }
+          };
+          scheduleDiv.appendChild(slot);
+        });
+        clientCards.appendChild(scheduleDiv);
       });
     });
   }
