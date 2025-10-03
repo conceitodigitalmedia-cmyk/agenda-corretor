@@ -11,17 +11,22 @@ h1,h2{text-align:center;margin-bottom:20px;}
 
 /* Tela Inicial */
 #homeDiv{max-width:500px;margin:50px auto;text-align:center;}
-#homeDiv button{width:80%;margin:10px;padding:15px;border:none;border-radius:8px;font-size:1em;cursor:pointer;background:#ff3399;color:#fff;transition:.3s;}
-#homeDiv button:hover{background:#ff66b3;}
+#homeDiv button{width:80%;margin:10px;padding:15px;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:.3s;color:#fff;}
+#btnCadastro{background:#3399ff;}
+#btnCadastro:hover{background:#66b3ff;}
+#btnLogin{background:#4caf50;}
+#btnLogin:hover{background:#66d36f;}
+#btnCliente{background:#ff9800;}
+#btnCliente:hover{background:#ffb366;}
 
-/* Login / Cadastrar Corretor */
+/* Boxes */
 .box{max-width:400px;margin:50px auto;background:#1e1e1e;padding:30px;border-radius:10px;box-shadow:0 0 20px rgba(255,0,128,0.3);}
 .box input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#2c2c2c;color:#fff;}
 .box button{width:100%;padding:12px;border:none;border-radius:6px;background:#ff3399;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
 .box button:hover{background:#ff66b3;}
 
 /* Painel Corretor */
-#panelDiv,#clientDiv,#registerDiv{display:none;}
+#panelDiv,#clientDiv,#registerDiv,#loginDiv{display:none;}
 .welcome{text-align:center;margin-bottom:20px;color:#ff66b3;font-size:1.2em;}
 .form-imovel,.form-schedule{max-width:700px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap;}
 .form-imovel input,.form-imovel textarea,.form-imovel button,.form-schedule input,.form-schedule button{flex:1 1 150px;padding:10px;border-radius:6px;border:none;}
@@ -58,29 +63,31 @@ h1,h2{text-align:center;margin-bottom:20px;}
 <!-- Tela Inicial -->
 <div id="homeDiv">
   <h1>Agenda Corretor</h1>
-  <button onclick="showLogin()">Login Corretor</button>
-  <button onclick="showRegister()">Cadastrar Corretor</button>
-  <button onclick="showClient()">Acesso Cliente</button>
+  <button id="btnCadastro" onclick="showRegister()">Cadastro Corretor</button>
+  <button id="btnLogin" onclick="showLogin()">Login Corretor</button>
+  <button id="btnCliente" onclick="showClient()">Acesso Cliente</button>
+</div>
+
+<!-- Cadastro Corretor -->
+<div id="registerDiv" class="box">
+  <h2>Cadastro Corretor</h2>
+  <input type="text" id="nome" placeholder="Nome (obrigatório)">
+  <input type="email" id="email" placeholder="E-mail">
+  <input type="text" id="telefone" placeholder="Telefone (obrigatório)">
+  <input type="text" id="creci" placeholder="CRECI (obrigatório)">
+  <input type="password" id="senha" placeholder="Senha (obrigatório)">
+  <button onclick="registerCorretor()">Cadastrar</button>
+  <button onclick="backHome()">Voltar</button>
+  <p id="registerMsg" style="color:green;text-align:center;"></p>
 </div>
 
 <!-- Login Corretor -->
 <div id="loginDiv" class="box">
-  <h2>Login do Corretor</h2>
-  <input type="text" id="username" placeholder="Nome de usuário">
+  <h2>Login Corretor</h2>
+  <input type="text" id="username" placeholder="Usuário">
   <input type="password" id="password" placeholder="Senha">
   <button onclick="login()">Entrar</button>
   <p id="loginError" style="color:red;text-align:center;"></p>
-</div>
-
-<!-- Cadastrar Corretor -->
-<div id="registerDiv" class="box">
-  <h2>Cadastrar Corretor</h2>
-  <input type="text" id="newUser" placeholder="Nome de usuário">
-  <input type="text" id="displayName" placeholder="Nome para exibição">
-  <input type="password" id="newPass" placeholder="Senha">
-  <button onclick="registerCorretor()">Cadastrar</button>
-  <button onclick="backHome()">Voltar</button>
-  <p id="registerMsg" style="color:green;text-align:center;"></p>
 </div>
 
 <!-- Painel Corretor -->
@@ -108,11 +115,13 @@ h1,h2{text-align:center;margin-bottom:20px;}
     <button onclick="addOrUpdateImovel()">Adicionar/Atualizar Imóvel</button>
   </div>
 
-  <!-- Cards de Imóveis -->
   <div class="cards-container" id="cardsContainer"></div>
-
-  <!-- Quadro de horários -->
   <div class="schedule" id="scheduleContainer"></div>
+
+  <div style="text-align:center;margin-top:20px;">
+    <p>Link individual do corretor para clientes:</p>
+    <input type="text" id="linkCorretor" style="width:80%;padding:10px;" readonly>
+  </div>
 </div>
 
 <!-- Painel Cliente -->
@@ -125,9 +134,7 @@ h1,h2{text-align:center;margin-bottom:20px;}
 const sheetUrl = "https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
 
 // Corretores
-let users = [
-  { username:"marcos", password:"123456", displayName:"Marcos Greijo" }
-];
+let users = [];
 let currentUser = null;
 
 // ---------- Navegação ----------
@@ -137,37 +144,40 @@ function showClient(){ hideAll(); document.getElementById("clientDiv").style.dis
 function hideAll(){ document.getElementById("homeDiv").style.display="none"; document.getElementById("loginDiv").style.display="none"; document.getElementById("registerDiv").style.display="none"; document.getElementById("panelDiv").style.display="none"; document.getElementById("clientDiv").style.display="none";}
 function backHome(){ hideAll(); document.getElementById("homeDiv").style.display="block"; }
 
+// ---------- Cadastro ----------
+function registerCorretor(){
+  const nome=document.getElementById("nome").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const telefone=document.getElementById("telefone").value.trim();
+  const creci=document.getElementById("creci").value.trim();
+  const senha=document.getElementById("senha").value.trim();
+  if(!nome || !telefone || !creci || !senha){ alert("Preencha todos os campos obrigatórios!"); return; }
+  if(users.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
+  users.push({nome,email,telefone,creci,senha,username:nome.toLowerCase()});
+  document.getElementById("registerMsg").innerText="Corretor cadastrado com sucesso!";
+  document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${nome.toLowerCase()}`;
+}
+
 // ---------- Login ----------
 function login(){
   const username=document.getElementById("username").value.trim();
   const password=document.getElementById("password").value.trim();
-  const user = users.find(u=>u.username===username && u.password===password);
+  const user = users.find(u=>u.username===username && u.senha===password);
   if(user){
     currentUser=user;
     hideAll();
     document.getElementById("panelDiv").style.display="block";
-    document.getElementById("welcome").innerText=`Bem-vindo, ${user.displayName}`;
+    document.getElementById("welcome").innerText=`Bem-vindo, ${user.nome}`;
+    document.getElementById("linkCorretor").value=`${location.origin}${location.pathname}?user=${user.username}`;
     loadImoveis();
     loadSchedule();
   }else{ document.getElementById("loginError").innerText="Usuário ou senha incorretos!"; }
-}
-
-// ---------- Cadastrar Corretor ----------
-function registerCorretor(){
-  const u=document.getElementById("newUser").value.trim();
-  const d=document.getElementById("displayName").value.trim();
-  const p=document.getElementById("newPass").value.trim();
-  if(!u||!d||!p){ alert("Preencha todos os campos!"); return; }
-  if(users.find(x=>x.username===u)){ alert("Usuário já existe!"); return; }
-  users.push({username:u,displayName:d,password:p});
-  document.getElementById("registerMsg").innerText="Corretor cadastrado com sucesso!";
 }
 
 // ---------- Adicionar/Atualizar Imóvel ----------
 function addOrUpdateImovel(){
   const imovel=document.getElementById("imovel").value.trim();
   if(!imovel){ alert("Informe o nome do imóvel!"); return; }
-  // Aqui você integra com SheetBest para criar ou atualizar o imóvel
   alert("Imóvel adicionado/atualizado (integração SheetBest ainda precisa configurar)!");
 }
 
@@ -187,6 +197,13 @@ function loadSchedule(){
     slot.innerText=dias[i];
     container.appendChild(slot);
   }
+}
+
+// ---------- Cliente via link ----------
+window.onload=function(){
+  const params=new URLSearchParams(window.location.search);
+  const user=params.get("user");
+  if(user){ hideAll(); document.getElementById("clientDiv").style.display="block"; document.getElementById("clientCards").innerHTML=`(Aqui serão mostrados os imóveis do corretor: ${user})`; }
 }
 </script>
 </body>
