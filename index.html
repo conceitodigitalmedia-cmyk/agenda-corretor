@@ -114,19 +114,17 @@
 </main>
 
 <footer class="text-center py-8 mt-10 border-t border-slate-800">
-    <img src="https://i.ibb.co/6yVZRfH/Logo-Conceito-curvas.png" alt="Logo Conceito Digital Media" class="h-10 mx-auto mb-4"/>
     <p class="text-sm text-slate-500">
-        Contato: (19) 98765-4321 | Criado por Marcos Greijo
+        agência conceito | Contato: +55 19 9.8906-5333
     </p>
 </footer>
 
 </div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbw_YFcMh2bn5xYkmLcenyn2guQsMjtqiK0knuyiUCD-GaSqCSZF7uNeJZ_cTjDxiQ6dxQ/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzsbS7fVZUBcqxTkGYoosKn3W8gOIE3vhV-4lGYgXpkk6bEktRZsK_ou8ZOps9FQKOocA/exec";
 let currentUser = null;
 
-// ===== Funções de navegação e UI =====
 function show(divId) {
     ['homeDiv', 'registerDiv', 'loginDiv', 'panelDiv', 'clientDiv'].forEach(id => {
         const el = document.getElementById(id);
@@ -138,7 +136,6 @@ function showLogin() { show('loginDiv'); }
 function backHome() { show('homeDiv'); }
 function logout() { currentUser = null; localStorage.removeItem('loggedInUser'); backHome(); }
 
-// ... (O restante do JavaScript é o mesmo da versão anterior, sem alterações) ...
 async function apiCall(method, params = {}) {
     try {
         let url = SHEET_URL;
@@ -150,13 +147,14 @@ async function apiCall(method, params = {}) {
             options.body = JSON.stringify(params);
         }
         const resp = await fetch(url, options);
-        if (!resp.ok) throw new Error('Erro de rede ou na API. Status: ' + resp.status);
+        if (!resp.ok) throw new Error('Erro de rede (' + resp.status + ')');
         return await resp.json();
     } catch (e) {
         console.error('API Error:', e);
         return { status: "error", message: e.message };
     }
 }
+
 async function registerCorretor() {
     const msgEl = document.getElementById('registerMsg');
     const data = { type: "cadastro", nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('telefone').value.trim(), creci: document.getElementById('creci').value.trim(), senha: document.getElementById('senha').value.trim() };
@@ -166,16 +164,18 @@ async function registerCorretor() {
     if (result.status === "ok") { msgEl.innerText = 'Cadastro realizado!'; setTimeout(() => { showLogin(); msgEl.innerText = ''; }, 1500); } 
     else { msgEl.innerText = `Erro: ${result.message}`; }
 }
+
 async function login() {
     const user = document.getElementById('username').value.trim().toLowerCase();
     const pass = document.getElementById('password').value.trim();
     if (!user || !pass) { document.getElementById('loginError').innerText = 'Usuário e senha são obrigatórios.'; return; }
     const result = await apiCall('GET', { action: 'getCorretores' });
-    if (result.status === "error" || !Array.isArray(result)) { document.getElementById('loginError').innerText = 'Erro ao carregar dados.'; return; }
+    if (!Array.isArray(result)) { document.getElementById('loginError').innerText = 'Erro ao carregar dados dos corretores.'; return; }
     const found = result.find(c => c.nome.toLowerCase() === user && String(c.senha) === pass);
     if (found) { document.getElementById('loginError').innerText = ''; localStorage.setItem('loggedInUser', JSON.stringify(found)); openPanel(found); } 
     else { document.getElementById('loginError').innerText = 'Usuário ou senha incorretos'; }
 }
+
 function openPanel(user) {
     currentUser = user;
     show('panelDiv');
@@ -183,6 +183,7 @@ function openPanel(user) {
     const baseUrl = window.location.href.split('?')[0];
     document.getElementById('linkCorretor').value = `${baseUrl}?user=${encodeURIComponent(user.nome.toLowerCase())}`;
 }
+
 async function addImovel() {
     if (!currentUser) { alert('Você precisa estar logado.'); return; }
     const fotos = [];
@@ -196,13 +197,14 @@ async function addImovel() {
         for(let i = 1; i <= 10; i++) { document.getElementById('foto' + i).value = ''; }
     } else { alert('Erro ao adicionar imóvel: ' + result.message); }
 }
+
 async function showClient(userFilter = null) {
     show('clientDiv');
     const clientCardsDiv = document.getElementById('clientCards');
     const clientTitle = document.getElementById('clientTitle');
     clientCardsDiv.innerHTML = '<p class="text-slate-400">Carregando imóveis...</p>';
     const [corretoresResult, imoveisResult] = await Promise.all([ apiCall('GET', { action: 'getCorretores' }), apiCall('GET', { action: 'getImoveis' }) ]);
-    if (imoveisResult.status === "error" || !Array.isArray(imoveisResult)) { clientCardsDiv.innerHTML = '<p class="text-red-400">Não foi possível carregar os imóveis.</p>'; return; }
+    if (!Array.isArray(imoveisResult)) { clientCardsDiv.innerHTML = '<p class="text-red-400">Não foi possível carregar os imóveis.</p>'; return; }
     let imoveis = imoveisResult;
     if (userFilter) {
         imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
@@ -216,7 +218,7 @@ async function showClient(userFilter = null) {
         const fotos = (typeof imovel.fotos === 'string' && imovel.fotos.startsWith('[')) ? JSON.parse(imovel.fotos) : [];
         const corretor = Array.isArray(corretoresResult) ? corretoresResult.find(c => c.nome === imovel.corretor) : null;
         const card = document.createElement('div');
-        card.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg flex flex-col';
+        card.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg flex flex-col transition-transform transform hover:-translate-y-1';
         card.innerHTML = `
             <img src="${fotos[0] || 'https://via.placeholder.com/400x250?text=Sem+Foto'}" alt="${imovel.nome}" class="w-full h-48 object-cover rounded-lg mb-4">
             <h3 class="text-xl font-bold text-white">${imovel.nome}</h3>
@@ -224,7 +226,7 @@ async function showClient(userFilter = null) {
             <p class="text-sm text-slate-400 mt-2">${imovel.endereco}</p>
             <p class="text-sm text-slate-300 mt-3 flex-grow">${imovel.descricao}</p>
             <div class="text-xs text-slate-400 mt-4 pt-3 border-t border-slate-700">
-                <p><strong>Corretor:</strong> ${imovel.corretor || 'Não informado'}</p>
+                <p><strong>Corretor:</strong> ${imovel.corretor || 'N/A'}</p>
                 ${corretor ? `<p><strong>CRECI:</strong> ${corretor.creci} | <strong>Telefone:</strong> ${corretor.telefone}</p>` : ''}
             </div>
             <div class="mt-4 flex gap-2">
@@ -235,6 +237,7 @@ async function showClient(userFilter = null) {
         clientCardsDiv.appendChild(card);
     });
 }
+
 window.onload = function() {
     const loggedInUser = localStorage.getItem('loggedInUser');
     if(loggedInUser) {
@@ -250,5 +253,6 @@ window.onload = function() {
     }
 };
 </script>
+
 </body>
 </html>
