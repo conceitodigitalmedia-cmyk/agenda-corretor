@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Agenda Corretor</title>
 <style>
-/* layout simples e responsivo */
 *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
 body{background:#0f0f10;color:#fff;padding:18px;min-height:100vh}
 h1,h2{ text-align:center;margin-bottom:14px }
@@ -132,16 +131,75 @@ h1,h2{ text-align:center;margin-bottom:14px }
 </div>
 
 <script>
-/* ========== CONFIG ========== */
 const SHEET_URL = "https://api.sheetbest.com/sheets/7085afe7-290d-45f3-b2d1-a5098c37e4eb";
 const HEADERS = {
   "Content-Type": "application/json",
   "X-Api-Key": "8Hv0zQMCvuc$XfiLdp4!5W2LQxtVY@V5vtlGvU8xrJ-CyIXS8DyfOFAt-mPxybPv"
 };
-/* ============================ */
 
-// ... (restante do código igual ao que enviei antes, sem precisar mudar)
+/* ===== Funções de navegação ===== */
+function showRegister(){document.getElementById('homeDiv').style.display='none';document.getElementById('registerDiv').style.display='block'}
+function showLogin(){document.getElementById('homeDiv').style.display='none';document.getElementById('loginDiv').style.display='block'}
+function showClient(){document.getElementById('homeDiv').style.display='none';document.getElementById('clientDiv').style.display='block'}
+function backHome(){document.getElementById('registerDiv').style.display='none';document.getElementById('loginDiv').style.display='none';document.getElementById('clientDiv').style.display='none';document.getElementById('panelDiv').style.display='none';document.getElementById('homeDiv').style.display='block'}
 
+/* ===== Função de cadastro ===== */
+async function registerCorretor(){
+  const nome=document.getElementById('nome').value.trim()
+  const email=document.getElementById('email').value.trim()
+  const telefone=document.getElementById('telefone').value.trim()
+  const creci=document.getElementById('creci').value.trim()
+  const senha=document.getElementById('senha').value.trim()
+  if(!nome||!telefone||!creci||!senha){document.getElementById('registerMsg').innerText='Preencha todos os campos obrigatórios!';return}
+  try{
+    const resp=await fetch(SHEET_URL,{method:'POST',headers:HEADERS,body:JSON.stringify([{nome,email,telefone,creci,senha}])})
+    if(resp.ok){document.getElementById('registerMsg').innerText='Cadastro realizado com sucesso!';setTimeout(()=>{backHome()},1500)}
+    else{document.getElementById('registerMsg').innerText='Erro no cadastro. Verifique a planilha/API'}
+  }catch(e){document.getElementById('registerMsg').innerText='Erro no cadastro: '+e.message}
+}
+
+/* ===== Função de login ===== */
+async function login(){
+  const user=document.getElementById('username').value.trim().toLowerCase()
+  const pass=document.getElementById('password').value.trim()
+  try{
+    const resp=await fetch(SHEET_URL,{method:'GET',headers:HEADERS})
+    const data=await resp.json()
+    const found=data.find(c=>c.nome.toLowerCase()===user&&c.senha===pass)
+    if(found){
+      document.getElementById('loginError').innerText=''
+      openPanel(found)
+    }else{document.getElementById('loginError').innerText='Usuário ou senha incorretos'}
+  }catch(e){document.getElementById('loginError').innerText='Erro: '+e.message}
+}
+
+/* ===== Abrir painel do corretor ===== */
+function openPanel(user){
+  document.getElementById('loginDiv').style.display='none'
+  document.getElementById('panelDiv').style.display='block'
+  document.getElementById('welcome').innerText='Olá, '+user.nome
+  document.getElementById('linkCorretor').value=window.location.href+'?user='+encodeURIComponent(user.nome.toLowerCase())
+}
+
+/* ===== Logout ===== */
+function logout(){backHome()}
+
+/* ===== Adicionar Imóvel ===== */
+async function addImovel(){
+  const nome=document.getElementById('nomeImovel').value.trim()
+  const preco=document.getElementById('preco').value.trim()
+  const endereco=document.getElementById('endereco').value.trim()
+  const site=document.getElementById('site').value.trim()
+  const descricao=document.getElementById('descricao').value.trim()
+  const fotos=[]
+  for(let i=1;i<=10;i++){const f=document.getElementById('foto'+i).value.trim();if(f)fotos.push(f)}
+  if(!nome){alert('Preencha o nome do imóvel');return}
+  try{
+    const resp=await fetch(SHEET_URL,{method:'POST',headers:HEADERS,body:JSON.stringify([{nome,preco,endereco,site,descricao,fotos:fotos.join(',')}])})
+    if(resp.ok){alert('Imóvel adicionado!')}
+    else{alert('Erro ao adicionar imóvel')}
+  }catch(e){alert('Erro: '+e.message)}
+}
 </script>
 </body>
 </html>
