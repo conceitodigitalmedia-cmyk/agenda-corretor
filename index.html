@@ -13,8 +13,9 @@
 <div class="container mx-auto p-4 flex flex-col min-h-screen">
 
 <main class="flex-grow flex items-center justify-center">
-    <div id="main-content">
-        <div id="homeDiv" class="text-center">
+    <div id="main-content" class="w-full">
+    
+        <div id="homeDiv" class="text-center" style="display:none;">
             <h1 class="text-5xl font-bold text-white mb-4">Agenda Corretor</h1>
             <p class="text-slate-400 mb-8">Sua ferramenta de gestão de imóveis e clientes.</p>
             <div class="w-full max-w-sm mx-auto space-y-4">
@@ -81,9 +82,7 @@
                         <textarea id="descricao" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full md:col-span-2" rows="3" placeholder="Descrição"></textarea>
                         <div class="md:col-span-2">
                             <p class="text-sm text-slate-400 mb-2">Cole os links das imagens abaixo (até 10):</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <input id="foto1" class="bg-slate-700 border-slate-600 rounded-lg p-3 w-full" placeholder="Link Foto 1 (principal)" />
-                                <input id="foto2" class="bg-slate-700 border-slate-600 rounded-lg p-3 w-full" placeholder="Link Foto 2" />
+                            <div id="fotosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 </div>
                         </div>
                     </div>
@@ -112,7 +111,199 @@
 </div>
 
 <script>
-// SEU SCRIPT JAVASCRIPT COMPLETO (o mesmo da versão anterior, sem alterações)
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbw_YFcMh2bn5xYkmLcenyn2guQsMjtqiK0knuyiUCD-GaSqCSZF7uNeJZ_cTjDxiQ6dxQ/exec";
+let currentUser = null;
+
+// ===== Funções de navegação e UI =====
+function show(divId) {
+    ['homeDiv', 'registerDiv', 'loginDiv', 'panelDiv', 'clientDiv'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (id === divId) ? 'block' : 'none';
+    });
+}
+function showRegister() { show('registerDiv'); }
+function showLogin() { show('loginDiv'); }
+function backHome() { show('homeDiv'); }
+function logout() { currentUser = null; localStorage.removeItem('loggedInUser'); backHome(); }
+
+// ===== Funções de API (GET e POST) =====
+async function apiCall(method, params = {}) {
+    try {
+        let url = SHEET_URL;
+        const options = { method, redirect: 'follow' };
+        if (method === 'GET') {
+            const query = new URLSearchParams(params).toString();
+            if(query) url += '?' + query;
+        } else { // POST
+            options.body = JSON.stringify(params);
+        }
+        const resp = await fetch(url, options);
+        if (!resp.ok) throw new Error('Erro de rede ou na API. Status: ' + resp.status);
+        return await resp.json();
+    } catch (e) {
+        console.error('API Error:', e);
+        return { status: "error", message: e.message };
+    }
+}
+
+// ===== Cadastro, Login e Painel Corretor =====
+async function registerCorretor() {
+    const msgEl = document.getElementById('registerMsg');
+    const data = {
+        type: "cadastro",
+        nome: document.getElementById('nome').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
+        creci: document.getElementById('creci').value.trim(),
+        senha: document.getElementById('senha').value.trim()
+    };
+    if (!data.nome || !data.telefone || !data.creci || !data.senha) {
+        msgEl.innerText = 'Preencha todos os campos obrigatórios!';
+        return;
+    }
+    msgEl.innerText = 'Cadastrando...';
+    const result = await apiCall('POST', data);
+    if (result.status === "ok") {
+        msgEl.innerText = 'Cadastro realizado com sucesso!';
+        setTimeout(() => { showLogin(); msgEl.innerText = ''; }, 1500);
+    } else {
+        msgEl.innerText = 'Erro no cadastro: ' + result.message;
+    }
+}
+
+async function login() {
+    const user = document.getElementById('username').value.trim().toLowerCase();
+    const pass = document.getElementById('password').value.trim();
+    if (!user || !pass) {
+        document.getElementById('loginError').innerText = 'Usuário e senha são obrigatórios.';
+        return;
+    }
+    const result = await apiCall('GET', { action: 'getCorretores' });
+    if (result.status === "error" || !Array.isArray(result)) {
+        document.getElementById('loginError').innerText = 'Erro ao carregar corretores.';
+        return;
+    }
+    const found = result.find(c => c.nome.toLowerCase() === user && String(c.senha) === pass);
+    if (found) {
+        document.getElementById('loginError').innerText = '';
+        localStorage.setItem('loggedInUser', JSON.stringify(found));
+        openPanel(found);
+    } else {
+        document.getElementById('loginError').innerText = 'Usuário ou senha incorretos';
+    }
+}
+
+function openPanel(user) {
+    currentUser = user;
+    show('panelDiv');
+    document.getElementById('welcome').innerText = 'Olá, ' + user.nome.split(' ')[0];
+    const baseUrl = window.location.href.split('?')[0];
+    document.getElementById('linkCorretor').value = `${baseUrl}?user=${encodeURIComponent(user.nome.toLowerCase())}`;
+    
+    // Gera os inputs de foto dinamicamente
+    const fotosContainer = document.getElementById('fotosContainer');
+    fotosContainer.innerHTML = '';
+    for(let i = 1; i <= 10; i++) {
+        fotosContainer.innerHTML += `<input id="foto${i}" class="bg-slate-700 border-slate-600 rounded-lg p-3 w-full" placeholder="Link Foto ${i}${i===1 ? ' (principal)' : ''}" />`;
+    }
+}
+
+async function addImovel() {
+    if (!currentUser) { alert('Você precisa estar logado.'); return; }
+    const fotos = [];
+    for(let i = 1; i <= 10; i++) {
+        const f = document.getElementById('foto' + i).value.trim();
+        if(f) fotos.push(f);
+    }
+    const data = {
+        type: "imovel",
+        corretor: currentUser.nome,
+        nome: document.getElementById('nomeImovel').value.trim(),
+        preco: document.getElementById('preco').value.trim(),
+        endereco: document.getElementById('endereco').value.trim(),
+        site: document.getElementById('site').value.trim(),
+        descricao: document.getElementById('descricao').value.trim(),
+        fotos: fotos
+    };
+    if (!data.nome) { alert('Preencha o nome do imóvel'); return; }
+    const result = await apiCall('POST', data);
+    if (result.status === "ok") {
+        alert('Imóvel adicionado com sucesso!');
+        ['nomeImovel', 'preco', 'endereco', 'site', 'descricao'].forEach(id => document.getElementById(id).value = '');
+        for(let i = 1; i <= 10; i++) { document.getElementById('foto' + i).value = ''; }
+    } else {
+        alert('Erro ao adicionar imóvel: ' + result.message);
+    }
+}
+
+async function showClient(userFilter = null) {
+    show('clientDiv');
+    const clientCardsDiv = document.getElementById('clientCards');
+    const clientTitle = document.getElementById('clientTitle');
+    clientCardsDiv.innerHTML = '<p class="text-slate-400">Carregando imóveis...</p>';
+
+    const [corretoresResult, imoveisResult] = await Promise.all([
+        apiCall('GET', { action: 'getCorretores' }),
+        apiCall('GET', { action: 'getImoveis' })
+    ]);
+
+    if (imoveisResult.status === "error" || !Array.isArray(imoveisResult)) {
+        clientCardsDiv.innerHTML = '<p class="text-red-400">Não foi possível carregar os imóveis.</p>';
+        return;
+    }
+    
+    let imoveis = imoveisResult;
+    if (userFilter) {
+        imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
+        clientTitle.innerText = `Vitrine de ${userFilter}`;
+    } else {
+        clientTitle.innerText = 'Vitrine de Imóveis (Geral)';
+    }
+
+    if (imoveis.length === 0) {
+        clientCardsDiv.innerHTML = '<p class="text-slate-400">Nenhum imóvel encontrado.</p>';
+        return;
+    }
+    
+    clientCardsDiv.innerHTML = '';
+    imoveis.forEach(imovel => {
+        const fotos = (typeof imovel.fotos === 'string' && imovel.fotos.startsWith('[')) ? JSON.parse(imovel.fotos) : [];
+        const corretor = Array.isArray(corretoresResult) ? corretoresResult.find(c => c.nome === imovel.corretor) : null;
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg flex flex-col transition-transform transform hover:-translate-y-1';
+        card.innerHTML = `
+            <img src="${fotos[0] || 'https://via.placeholder.com/400x250?text=Sem+Foto'}" alt="${imovel.nome}" class="w-full h-48 object-cover rounded-lg mb-4">
+            <h3 class="text-xl font-bold text-white">${imovel.nome}</h3>
+            <p class="text-lg font-semibold text-green-400 mt-1">${imovel.preco}</p>
+            <p class="text-sm text-slate-400 mt-2">${imovel.endereco}</p>
+            <p class="text-sm text-slate-300 mt-3 flex-grow">${imovel.descricao}</p>
+            <div class="text-xs text-slate-400 mt-4 pt-3 border-t border-slate-700">
+                <p><strong>Corretor:</strong> ${imovel.corretor || 'Não informado'}</p>
+                ${corretor ? `<p><strong>CRECI:</strong> ${corretor.creci} | <strong>Telefone:</strong> ${corretor.telefone}</p>` : ''}
+            </div>
+            <div class="mt-4 flex gap-2">
+                ${imovel.site ? `<a href="${imovel.site}" target="_blank" class="flex-1 text-center py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 text-sm">Ver Site</a>` : ''}
+                <button class="flex-1 text-center py-2 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 text-sm">Agendar Visita</button>
+            </div>
+        `;
+        clientCardsDiv.appendChild(card);
+    });
+}
+
+window.onload = function() {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if(loggedInUser) {
+        openPanel(JSON.parse(loggedInUser));
+        return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get('user');
+    if (user) {
+        showClient(user);
+    } else {
+        show('homeDiv');
+    }
+};
 </script>
 </body>
 </html>
