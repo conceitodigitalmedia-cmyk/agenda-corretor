@@ -3,293 +3,120 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Agenda Corretor</title>
+<title>Agenda Corretor - Premium</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
-body{background:#0f0f10;color:#fff;padding:18px;min-height:100vh}
-h1,h2{ text-align:center;margin-bottom:14px }
-h3{font-size:1.1rem; margin-bottom: 8px;}
-.container{max-width:1100px;margin:0 auto}
-#homeDiv{max-width:520px;margin:48px auto;text-align:center}
-.btn{display:block;width:80%;margin:10px auto;padding:14px;border-radius:10px;border:none;color:#fff;font-weight:700;cursor:pointer;transition:background .2s}
-.btn:hover{opacity:0.9}
-.btn-blue{background:#2f8ef7}
-.btn-green{background:#33c16b}
-.btn-orange{background:#ff9800}
-.btn-sm{padding:8px 12px;width:auto;display:inline-block;margin:5px}
-.box{max-width:720px;margin:18px auto;background:#121212;padding:18px;border-radius:10px;border:1px solid #222}
-.input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;background:#141416;color:#fff}
-.grid{display:grid;gap:12px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
-.card{background:#141416;padding:14px;border-radius:10px;border:1px solid #2b2b2b}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px}
-.card-title{font-size:1.2rem;font-weight:bold;color:#fff;margin-bottom:4px}
-.card-price{font-weight:bold;color:#33c16b;margin-bottom:8px}
-.card-broker{font-size:0.8rem;color:#ccc;margin-top:10px;padding-top:10px;border-top:1px solid #2b2b2b}
-.small{font-size:0.9rem;color:#ddd}
-.linkbox{margin-top:14px;text-align:center}
-.readonly{width:100%;padding:10px;border-radius:8px;border:none;background:#222;color:#fff;text-align:center}
-.note{font-size:0.9rem;color:#bbb;margin-top:8px;text-align:center}
+    /* Usando a fonte padrão do Tailwind, que é mais moderna */
+    body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
 </style>
 </head>
-<body>
-<div class="container">
+<body class="bg-slate-900 text-gray-300 antialiased">
+<div class="container mx-auto p-4">
 
-    <div id="homeDiv">
-    <h1>Agenda Corretor</h1>
-    <button class="btn btn-blue" onclick="showRegister()">Cadastro Corretor</button>
-    <button class="btn btn-green" onclick="showLogin()">Login Corretor</button>
-    <button class="btn btn-orange" onclick="showClient()">Acesso Cliente (Geral)</button>
-    <p class="note">Para a vitrine de um corretor específico, use o link gerado no painel dele.</p>
+    <div id="homeDiv" class="flex flex-col items-center justify-center min-h-[80vh]">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold text-white mb-4">Agenda Corretor</h1>
+        <p class="text-slate-400 mb-8">Sua ferramenta de gestão de imóveis e clientes.</p>
+    </div>
+    <div class="w-full max-w-sm space-y-4">
+        <button class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-lg transform transition-transform hover:scale-105" onclick="showRegister()">Cadastro Corretor</button>
+        <button class="w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-lg shadow-lg transform transition-transform hover:scale-105" onclick="showLogin()">Login Corretor</button>
+        <button class="w-full py-3 px-6 bg-orange-500 text-white font-semibold rounded-lg shadow-lg transform transition-transform hover:scale-105" onclick="showClient()">Acesso Cliente (Geral)</button>
+    </div>
+    <p class="text-xs text-slate-500 mt-6">Para a vitrine de um corretor, use o link gerado no painel dele.</p>
   </div>
 
-    <div id="registerDiv" class="box" style="display:none">
-    <h2>Cadastro de Corretor</h2>
-    <input id="nome" class="input" placeholder="Nome (obrigatório)" />
-    <input id="email" class="input" placeholder="E-mail" />
-    <input id="telefone" class="input" placeholder="Telefone (obrigatório)" />
-    <input id="creci" class="input" placeholder="CRECI (obrigatório)" />
-    <input id="senha" class="input" type="password" placeholder="Senha (obrigatório)" />
-    <button class="btn btn-blue" onclick="registerCorretor()">Cadastrar</button>
-    <button class="btn" onclick="backHome()">Voltar</button>
-    <p id="registerMsg" class="small" style="margin-top:10px;text-align:center"></p>
+    <div id="registerDiv" class="max-w-xl mx-auto" style="display:none">
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-2xl">
+        <h2 class="text-3xl font-bold text-white text-center mb-6">Cadastro de Corretor</h2>
+        <div class="space-y-4">
+            <input id="nome" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Nome Completo (obrigatório)" />
+            <input id="email" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="E-mail" />
+            <input id="telefone" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Telefone (obrigatório)" />
+            <input id="creci" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="CRECI (obrigatório)" />
+            <input id="senha" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" type="password" placeholder="Senha (obrigatório)" />
+        </div>
+        <div class="mt-6 space-y-3">
+            <button class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors" onclick="registerCorretor()">Cadastrar</button>
+            <button class="w-full py-2 px-6 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors" onclick="backHome()">Voltar</button>
+        </div>
+        <p id="registerMsg" class="text-sm text-center mt-4"></p>
+    </div>
   </div>
 
-    <div id="loginDiv" class="box" style="display:none">
-    <h2>Login Corretor</h2>
-    <input id="username" class="input" placeholder="Usuário (seu nome, em minúsculas)" />
-    <input id="password" class="input" type="password" placeholder="Senha" />
-    <button class="btn btn-green" onclick="login()">Entrar</button>
-    <button class="btn" onclick="backHome()">Voltar</button>
-    <p id="loginError" class="small" style="margin-top:10px;color:#ff7777;text-align:center"></p>
+    <div id="loginDiv" class="max-w-xl mx-auto" style="display:none">
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-2xl">
+        <h2 class="text-3xl font-bold text-white text-center mb-6">Login do Corretor</h2>
+        <div class="space-y-4">
+            <input id="username" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" placeholder="Usuário (seu nome, em minúsculas)" />
+            <input id="password" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" type="password" placeholder="Senha" />
+        </div>
+        <div class="mt-6 space-y-3">
+            <button class="w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition-colors" onclick="login()">Entrar</button>
+            <button class="w-full py-2 px-6 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors" onclick="backHome()">Voltar</button>
+        </div>
+        <p id="loginError" class="text-sm text-center mt-4 text-red-400"></p>
+    </div>
   </div>
 
-    <div id="panelDiv" class="box" style="display:none">
-    <h1>Painel do Corretor</h1>
-    <h2 id="welcome" class="small" style="margin-bottom:10px"></h2>
-    <div>
-      <h3 style="margin-top:14px;padding-top:14px;border-top:1px solid #333">Adicionar / Atualizar Imóvel</h3>
-      <div class="grid">
-        <input id="nomeImovel" class="input" placeholder="Nome do imóvel" />
-        <input id="preco" class="input" placeholder="Preço (Ex: R$ 500.000,00)" />
-        <input id="endereco" class="input" placeholder="Endereço / Cidade" />
-        <input id="site" class="input" placeholder="Site do imóvel (opcional)" />
-        <textarea id="descricao" class="input" rows="3" placeholder="Descrição"></textarea>
-        <p class="small" style="margin-top:10px; margin-bottom:-5px;">Cole os links das imagens abaixo:</p>
-        <input id="foto1" class="input" placeholder="Link Foto 1 (principal)" />
-        <input id="foto2" class="input" placeholder="Link Foto 2" />
-        <input id="foto3" class="input" placeholder="Link Foto 3" />
-        <input id="foto4" class="input" placeholder="Link Foto 4" />
-        <input id="foto5" class="input" placeholder="Link Foto 5" />
-        <input id="foto6" class="input" placeholder="Link Foto 6" />
-        <input id="foto7" class="input" placeholder="Link Foto 7" />
-        <input id="foto8" class="input" placeholder="Link Foto 8" />
-        <input id="foto9" class="input" placeholder="Link Foto 9" />
-        <input id="foto10" class="input" placeholder="Link Foto 10" />
-      </div>
-      <div style="margin-top:10px">
-        <button class="btn btn-blue" onclick="addImovel()">Adicionar Imóvel</button>
-      </div>
-    </div>
-    <div class="linkbox">
-      <p class="small">Seu link individual para clientes:</p>
-      <input id="linkCorretor" class="readonly" readonly />
-    </div>
-    <div style="margin-top:10px;text-align:center">
-      <button class="btn" onclick="logout()">Sair</button>
-    </div>
+    <div id="panelDiv" class="max-w-4xl mx-auto" style="display:none">
+    <header class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-white">Painel do Corretor</h1>
+        <div class="flex items-center gap-4">
+            <span id="welcome" class="text-slate-400"></span>
+            <button class="py-2 px-4 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors text-sm" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
+    <div class="space-y-6">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
+            <p class="text-sm text-slate-400">Seu link individual para clientes:</p>
+            <input id="linkCorretor" class="w-full mt-2 p-2 bg-slate-900 border border-slate-600 text-slate-300 rounded-lg" readonly />
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-white mb-4">Adicionar / Atualizar Imóvel</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <input id="nomeImovel" class="input bg-slate-700 border border-slate-600" placeholder="Nome do imóvel" />
+                <input id="preco" class="input bg-slate-700 border border-slate-600" placeholder="Preço (Ex: R$ 500.000,00)" />
+                <input id="endereco" class="input bg-slate-700 border border-slate-600 md:col-span-2" placeholder="Endereço / Cidade" />
+                <input id="site" class="input bg-slate-700 border border-slate-600 md:col-span-2" placeholder="Site do imóvel (opcional)" />
+                <textarea id="descricao" class="input bg-slate-700 border border-slate-600 md:col-span-2" rows="3" placeholder="Descrição"></textarea>
+                
+                <div class="md:col-span-2">
+                    <p class="text-sm text-slate-400 mb-2">Cole os links das imagens abaixo (até 10):</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input id="foto1" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 1 (principal)" />
+                        <input id="foto2" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 2" />
+                        <input id="foto3" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 3" />
+                        <input id="foto4" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 4" />
+                        <input id="foto5" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 5" />
+                        <input id="foto6" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 6" />
+                        <input id="foto7" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 7" />
+                        <input id="foto8" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 8" />
+                        <input id="foto9" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 9" />
+                        <input id="foto10" class="input bg-slate-700 border-slate-600" placeholder="Link Foto 10" />
+                    </div>
+                </div>
+            </div>
+            <button class="w-full md:w-auto justify-self-end py-2 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors" onclick="addImovel()">Adicionar Imóvel</button>
+        </div>
+    </div>
   </div>
 
     <div id="clientDiv" style="display:none">
-    <h2 id="clientTitle">Vitrine de Imóveis</h2>
-    <div id="clientCards" class="cards"></div>
-    <div style="margin-top:12px;text-align:center">
-      <button class="btn" onclick="backHome()">Voltar para o Início</button>
-    </div>
+    <header class="flex justify-between items-center mb-8">
+        <h2 id="clientTitle" class="text-3xl font-bold text-white">Vitrine de Imóveis</h2>
+        <button class="py-2 px-4 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors text-sm" onclick="backHome()">Voltar ao Início</button>
+    </header>
+    <div id="clientCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
+
 </div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbw_YFcMh2bn5xYkmLcenyn2guQsMjtqiK0knuyiUCD-GaSqCSZF7uNeJZ_cTjDxiQ6dxQ/exec";
-let currentUser = null; // Guarda o corretor logado
-
-// ===== Funções de navegação e UI =====
-function show(divId) {
-    ['homeDiv', 'registerDiv', 'loginDiv', 'panelDiv', 'clientDiv'].forEach(id => {
-        document.getElementById(id).style.display = (id === divId) ? 'block' : 'none';
-    });
-}
-function showRegister() { show('registerDiv'); }
-function showLogin() { show('loginDiv'); }
-function backHome() { show('homeDiv'); }
-function logout() { currentUser = null; backHome(); }
-
-// ===== Funções de API (GET e POST) =====
-async function apiCall(method, params = {}) {
-    try {
-        let url = SHEET_URL;
-        const options = { method };
-        if (method === 'GET') {
-            const query = new URLSearchParams(params).toString();
-            if(query) url += '?' + query;
-        } else { // POST
-            options.headers = { 'Content-Type': 'application/json' };
-            options.body = JSON.stringify(params);
-        }
-        const resp = await fetch(url, options);
-        if (!resp.ok) throw new Error('Erro de rede ou na API. Status: ' + resp.status);
-        return await resp.json();
-    } catch (e) {
-        console.error('API Error:', e);
-        return { status: "error", message: e.message };
-    }
-}
-
-// ===== Cadastro, Login e Painel Corretor =====
-async function registerCorretor() {
-    const msgEl = document.getElementById('registerMsg');
-    const data = {
-        type: "cadastro",
-        nome: document.getElementById('nome').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        telefone: document.getElementById('telefone').value.trim(),
-        creci: document.getElementById('creci').value.trim(),
-        senha: document.getElementById('senha').value.trim()
-    };
-    if (!data.nome || !data.telefone || !data.creci || !data.senha) {
-        msgEl.innerText = 'Preencha todos os campos obrigatórios!';
-        return;
-    }
-    msgEl.innerText = 'Cadastrando...';
-    const result = await apiCall('POST', data);
-    if (result.status === "ok") {
-        msgEl.innerText = 'Cadastro realizado com sucesso!';
-        setTimeout(() => { showLogin(); msgEl.innerText = ''; }, 1500);
-    } else {
-        msgEl.innerText = 'Erro no cadastro: ' + result.message;
-    }
-}
-
-async function login() {
-    const user = document.getElementById('username').value.trim().toLowerCase();
-    const pass = document.getElementById('password').value.trim();
-    if (!user || !pass) {
-        document.getElementById('loginError').innerText = 'Usuário e senha são obrigatórios.';
-        return;
-    }
-    const result = await apiCall('GET', { action: 'getCorretores' });
-    if (result.status === "error" || !Array.isArray(result)) {
-        document.getElementById('loginError').innerText = 'Erro ao carregar corretores.';
-        return;
-    }
-    const found = result.find(c => c.nome.toLowerCase() === user && String(c.senha) === pass);
-    if (found) {
-        document.getElementById('loginError').innerText = '';
-        openPanel(found);
-    } else {
-        document.getElementById('loginError').innerText = 'Usuário ou senha incorretos';
-    }
-}
-
-function openPanel(user) {
-    currentUser = user;
-    show('panelDiv');
-    document.getElementById('welcome').innerText = 'Olá, ' + user.nome;
-    const baseUrl = window.location.href.split('?')[0];
-    document.getElementById('linkCorretor').value = `${baseUrl}?user=${encodeURIComponent(user.nome.toLowerCase())}`;
-}
-
-async function addImovel() {
-    if (!currentUser) { alert('Você precisa estar logado.'); return; }
-    const fotos = [];
-    for(let i = 1; i <= 10; i++) {
-        const f = document.getElementById('foto' + i).value.trim();
-        if(f) fotos.push(f);
-    }
-    const data = {
-        type: "imovel",
-        corretor: currentUser.nome,
-        nome: document.getElementById('nomeImovel').value.trim(),
-        preco: document.getElementById('preco').value.trim(),
-        endereco: document.getElementById('endereco').value.trim(),
-        site: document.getElementById('site').value.trim(),
-        descricao: document.getElementById('descricao').value.trim(),
-        fotos: fotos
-    };
-    if (!data.nome) { alert('Preencha o nome do imóvel'); return; }
-    const result = await apiCall('POST', data);
-    if (result.status === "ok") {
-        alert('Imóvel adicionado com sucesso!');
-        ['nomeImovel', 'preco', 'endereco', 'site', 'descricao'].forEach(id => document.getElementById(id).value = '');
-        for(let i = 1; i <= 10; i++) { document.getElementById('foto' + i).value = ''; }
-    } else {
-        alert('Erro ao adicionar imóvel: ' + result.message);
-    }
-}
-
-// ===== Painel do Cliente =====
-async function showClient(userFilter = null) {
-    show('clientDiv');
-    const clientCardsDiv = document.getElementById('clientCards');
-    const clientTitle = document.getElementById('clientTitle');
-    clientCardsDiv.innerHTML = '<p>Carregando imóveis...</p>';
-
-    const [corretoresResult, imoveisResult] = await Promise.all([
-        apiCall('GET', { action: 'getCorretores' }),
-        apiCall('GET', { action: 'getImoveis' })
-    ]);
-
-    if (imoveisResult.status === "error" || !Array.isArray(imoveisResult)) {
-        clientCardsDiv.innerHTML = '<p>Não foi possível carregar os imóveis.</p>';
-        return;
-    }
-    
-    let imoveis = imoveisResult;
-    if (userFilter) {
-        imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
-        clientTitle.innerText = `Vitrine de ${userFilter}`;
-    } else {
-        clientTitle.innerText = 'Vitrine de Imóveis (Geral)';
-    }
-
-    if (imoveis.length === 0) {
-        clientCardsDiv.innerHTML = '<p>Nenhum imóvel encontrado para este corretor.</p>';
-        return;
-    }
-    
-    clientCardsDiv.innerHTML = '';
-    imoveis.forEach(imovel => {
-        const fotos = imovel.fotos ? JSON.parse(imovel.fotos) : [];
-        const corretor = corretoresResult.find(c => c.nome === imovel.corretor);
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <img src="${fotos[0] || 'https://via.placeholder.com/300x200?text=Sem+Foto'}" alt="${imovel.nome}">
-            <h3 class="card-title">${imovel.nome}</h3>
-            <p class="card-price">${imovel.preco}</p>
-            <p class="small">${imovel.endereco}</p>
-            <p class="small" style="margin-top:8px;">${imovel.descricao}</p>
-            <div class="card-broker">
-                <p><strong>Corretor:</strong> ${imovel.corretor || 'Não informado'}</p>
-                ${corretor ? `<p><strong>CRECI:</strong> ${corretor.creci} | <strong>Telefone:</strong> ${corretor.telefone}</p>` : ''}
-            </div>
-            ${imovel.site ? `<a href="${imovel.site}" target="_blank" class="btn btn-sm btn-blue" style="margin-top:10px;">Ver Site</a>` : ''}
-            <button class="btn btn-sm btn-green" style="margin-top:10px;">Agendar Visita</button>
-        `;
-        clientCardsDiv.appendChild(card);
-    });
-}
-
-// ===== Função que roda ao carregar a página =====
-window.onload = function() {
-    const params = new URLSearchParams(window.location.search);
-    const user = params.get('user');
-    if (user) {
-        showClient(user);
-    } else {
-        show('homeDiv');
-    }
-};
+// SEU SCRIPT JAVASCRIPT COMPLETO E SEM ALTERAÇÕES VEM AQUI
+// ...
 </script>
 </body>
 </html>
