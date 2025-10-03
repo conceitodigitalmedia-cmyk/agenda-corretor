@@ -107,6 +107,10 @@ h1,h2{text-align:center;margin-bottom:20px;}
 
 <script>
 const sheetUrl="https://api.sheetbest.com/sheets/5c119db8-bebe-428a-9f10-be9c58262adf";
+const headers = {
+  "Content-Type": "application/json",
+  "Authorization": "S@r@kOI_%lZFzQd!d7@bkSdQw#$oI9cdB57yarmlf_Z$0i3H29BzpamszZeZdK2n"
+};
 let currentUser=null;
 
 // ---------- Navegação ----------
@@ -125,13 +129,13 @@ async function registerCorretor(){
   const senha=document.getElementById("senha").value.trim();
   if(!nome||!telefone||!creci||!senha){ alert("Preencha todos os campos obrigatórios!"); return; }
 
-  const res = await fetch(sheetUrl); 
+  const res = await fetch(sheetUrl,{headers}); 
   const data = await res.json();
   if(data.find(u=>u.nome===nome)){ alert("Corretor já cadastrado!"); return; }
 
   await fetch(sheetUrl,{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers: headers,
     body: JSON.stringify({nome,email,telefone,creci,senha,username:nome.toLowerCase()})
   });
 
@@ -143,7 +147,7 @@ async function registerCorretor(){
 async function login(){
   const username=document.getElementById("username").value.trim();
   const password=document.getElementById("password").value.trim();
-  const res = await fetch(sheetUrl); 
+  const res = await fetch(sheetUrl,{headers}); 
   const data = await res.json();
   const user = data.find(u=>u.username===username && u.senha===password);
   if(user){
@@ -166,7 +170,7 @@ async function addOrUpdateImovel(){
   for(let i=1;i<=10;i++){ let val=document.getElementById(`foto${i}`).value.trim(); if(val) fotos.push(val); }
   await fetch(sheetUrl,{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers: headers,
     body: JSON.stringify({corretor:currentUser.username,imovel,preco,endereco,site,descricao,fotos:fotos.join(",")})
   });
   alert("Imóvel adicionado/atualizado com sucesso!");
@@ -175,7 +179,7 @@ async function addOrUpdateImovel(){
 
 // ---------- Carregar Imóveis ----------
 async function loadImoveis(){
-  const res=await fetch(sheetUrl); const data=await res.json();
+  const res=await fetch(sheetUrl,{headers}); const data=await res.json();
   const imoveis = data.filter(i=>i.corretor===currentUser.username && i.imovel);
   const container=document.getElementById("cardsContainer");
   container.innerHTML="";
@@ -187,7 +191,7 @@ async function loadImoveis(){
   });
 }
 
-// ---------- Quadro de horários (interativo) ----------
+// ---------- Quadro de horários ----------
 async function loadSchedule(){
   const container=document.getElementById("scheduleContainer");
   container.innerHTML="";
@@ -208,8 +212,32 @@ async function loadSchedule(){
 window.onload=function(){
   const params=new URLSearchParams(window.location.search);
   const user=params.get("user");
-  if(user){ hideAll(); document.getElementById("clientDiv").style.display="block"; document.getElementById("clientCards").innerHTML=`(Aqui serão mostrados os imóveis do corretor: ${user})`; }
+  if(user){
+    hideAll();
+    document.getElementById("clientDiv").style.display="block";
+    document.getElementById("clientCards").innerHTML="Carregando imóveis...";
+    
+    fetch(sheetUrl,{headers})
+    .then(res=>res.json())
+    .then(data=>{
+      const imoveis = data.filter(i=>i.corretor===user && i.imovel);
+      const container=document.getElementById("clientCards");
+      container.innerHTML="";
+      imoveis.forEach(i=>{
+        const card=document.createElement("div"); card.classList.add("card");
+        card.innerHTML=`<h3>${i.imovel}</h3><p>Preço: ${i.preco}</p><p>Endereço: ${i.endereco}</p><p>${i.descricao}</p>`;
+        if(i.fotos){ 
+          const imgs=i.fotos.split(",");
+          const imgContainer=document.createElement("div"); imgContainer.classList.add("img-container");
+          imgs.forEach(src=>{ let img=document.createElement("img"); img.src=src; imgContainer.appendChild(img); });
+          card.appendChild(imgContainer);
+        }
+        container.appendChild(card);
+      });
+    });
+  }
 }
 </script>
 </body>
 </html>
+
