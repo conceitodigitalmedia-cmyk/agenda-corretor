@@ -60,12 +60,7 @@
            </div>
 
         <div id="clientDiv" style="display:none">
-            <header class="flex justify-between items-center mb-8">
-                <h2 id="clientTitle" class="text-3xl font-bold text-white">Vitrine de Imóveis</h2>
-                <button class="py-2 px-4 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors text-sm" onclick="backHome()">Voltar ao Início</button>
-            </header>
-            <div id="clientCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </div>
+            </div>
     </div>
 </main>
 
@@ -90,10 +85,9 @@ function show(divId) {
 }
 
 function backHome() { 
-    localStorage.removeItem('loggedInUser'); // Garante que, ao voltar, o login não persista
+    localStorage.removeItem('loggedInUser');
     currentUser = null;
     show('auth-container'); 
-    // Limpa a URL de parâmetros de usuário
     window.history.pushState({}, document.title, window.location.pathname);
 }
 
@@ -104,7 +98,7 @@ function logout() {
 }
 
 async function apiCall(method, params = {}) {
-    document.body.style.cursor = 'wait'; // Mostra cursor de espera
+    document.body.style.cursor = 'wait';
     try {
         let url = SHEET_URL;
         const options = { method, redirect: 'follow' };
@@ -121,7 +115,7 @@ async function apiCall(method, params = {}) {
         console.error('API Error:', e);
         return { status: "error", message: e.message };
     } finally {
-        document.body.style.cursor = 'default'; // Restaura cursor
+        document.body.style.cursor = 'default';
     }
 }
 
@@ -136,7 +130,6 @@ async function registerCorretor() {
         setTimeout(() => { 
             msgEl.innerText = '';
             document.getElementById('username').value = data.nome.toLowerCase();
-            document.getElementById('registerForm').reset();
         }, 2000);
     } else { msgEl.innerText = `Erro no cadastro: ${result.message}`; }
 }
@@ -207,7 +200,7 @@ async function addImovel() {
 
 async function renderClientProperties(userFilter = null) {
     const clientCardsDiv = document.getElementById('clientCards');
-    const clientTitle = document.getElementById('clientTitle');
+    const clientTitle = document.getElementById('clientDiv').querySelector('h2');
     clientCardsDiv.innerHTML = '<p class="text-slate-400">Carregando imóveis...</p>';
     const [corretoresResult, imoveisResult] = await Promise.all([ apiCall('GET', { action: 'getCorretores' }), apiCall('GET', { action: 'getImoveis' }) ]);
     if (!Array.isArray(imoveisResult)) { clientCardsDiv.innerHTML = '<p class="text-red-400">Não foi possível carregar os imóveis.</p>'; return; }
@@ -262,5 +255,6 @@ window.onload = function() {
     }
 };
 </script>
+
 </body>
 </html>
