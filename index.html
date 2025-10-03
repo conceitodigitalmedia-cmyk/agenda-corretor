@@ -8,26 +8,25 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial,sans-serif}
 body{background:#0f0f10;color:#fff;padding:18px;min-height:100vh}
 h1,h2{ text-align:center;margin-bottom:14px }
+h3{font-size:1.1rem; margin-bottom: 8px;}
 .container{max-width:1100px;margin:0 auto}
 #homeDiv{max-width:520px;margin:48px auto;text-align:center}
 .btn{display:block;width:80%;margin:10px auto;padding:14px;border-radius:10px;border:none;color:#fff;font-weight:700;cursor:pointer;transition:background .2s}
-.btn-blue{background:#2f8ef7}.btn-blue:hover{background:#1a7de0}
-.btn-green{background:#33c16b}.btn-green:hover{background:#27a858}
-.btn-orange{background:#ff9800}.btn-orange:hover{background:#e68900}
-.btn-sm{padding:8px 12px;width:auto;display:inline-block;margin:0 5px}
+.btn:hover{opacity:0.9}
+.btn-blue{background:#2f8ef7}
+.btn-green{background:#33c16b}
+.btn-orange{background:#ff9800}
+.btn-sm{padding:8px 12px;width:auto;display:inline-block;margin:5px}
 .box{max-width:720px;margin:18px auto;background:#121212;padding:18px;border-radius:10px;border:1px solid #222}
 .input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;background:#141416;color:#fff}
 .grid{display:grid;gap:12px}
-.grid-cols-3{grid-template-columns:repeat(3,1fr)}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
 .card{background:#141416;padding:14px;border-radius:10px;border:1px solid #2b2b2b}
 .card img{width:100%;height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px}
+.card-title{font-size:1.2rem;font-weight:bold;color:#fff;margin-bottom:4px}
+.card-price{font-weight:bold;color:#33c16b;margin-bottom:8px}
+.card-broker{font-size:0.8rem;color:#ccc;margin-top:10px;padding-top:10px;border-top:1px solid #2b2b2b}
 .small{font-size:0.9rem;color:#ddd}
-.schedule{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
-.slot{padding:8px;border-radius:8px;text-align:center;cursor:pointer;font-weight:700}
-.available{background:#2ecc71;color:#012}
-.occupied{background:#e74c3c;color:#fff}
-.personal{background:#f39c12;color:#111}
 .linkbox{margin-top:14px;text-align:center}
 .readonly{width:100%;padding:10px;border-radius:8px;border:none;background:#222;color:#fff;text-align:center}
 .note{font-size:0.9rem;color:#bbb;margin-top:8px;text-align:center}
@@ -41,7 +40,7 @@ h1,h2{ text-align:center;margin-bottom:14px }
     <button class="btn btn-blue" onclick="showRegister()">Cadastro Corretor</button>
     <button class="btn btn-green" onclick="showLogin()">Login Corretor</button>
     <button class="btn btn-orange" onclick="showClient()">Acesso Cliente (Geral)</button>
-    <p class="note">Para a vitrine de um corretor específico, use o link gerado no painel dele (ex: ?user=marcos).</p>
+    <p class="note">Para a vitrine de um corretor específico, use o link gerado no painel dele.</p>
   </div>
 
     <div id="registerDiv" class="box" style="display:none">
@@ -69,14 +68,14 @@ h1,h2{ text-align:center;margin-bottom:14px }
     <h1>Painel do Corretor</h1>
     <h2 id="welcome" class="small" style="margin-bottom:10px"></h2>
     <div>
-      <h3 style="margin-bottom:8px;font-size:1.2rem;border-top:1px solid #333;padding-top:14px;">Adicionar / Atualizar Imóvel</h3>
+      <h3 style="margin-top:14px;padding-top:14px;border-top:1px solid #333">Adicionar / Atualizar Imóvel</h3>
       <div class="grid">
         <input id="nomeImovel" class="input" placeholder="Nome do imóvel" />
         <input id="preco" class="input" placeholder="Preço (Ex: R$ 500.000,00)" />
         <input id="endereco" class="input" placeholder="Endereço / Cidade" />
         <input id="site" class="input" placeholder="Site do imóvel (opcional)" />
         <textarea id="descricao" class="input" rows="3" placeholder="Descrição"></textarea>
-        <p class="small" style="margin-top:10px; margin-bottom:-5px;">Cole os links das imagens abaixo:</p>
+        <p class="small" style="margin-top:10px; margin-bottom:-5px;">Cole os links das imagens abaixo:</p>
         <input id="foto1" class="input" placeholder="Link Foto 1 (principal)" />
         <input id="foto2" class="input" placeholder="Link Foto 2" />
         <input id="foto3" class="input" placeholder="Link Foto 3" />
@@ -108,7 +107,6 @@ h1,h2{ text-align:center;margin-bottom:14px }
       <button class="btn" onclick="backHome()">Voltar para o Início</button>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -131,17 +129,15 @@ async function apiCall(method, params = {}) {
     try {
         let url = SHEET_URL;
         const options = { method };
-        
         if (method === 'GET') {
             const query = new URLSearchParams(params).toString();
             if(query) url += '?' + query;
-        } else if (method === 'POST') {
+        } else { // POST
             options.headers = { 'Content-Type': 'application/json' };
             options.body = JSON.stringify(params);
         }
-        
         const resp = await fetch(url, options);
-        if (!resp.ok) throw new Error('Erro de rede.');
+        if (!resp.ok) throw new Error('Erro de rede ou na API. Status: ' + resp.status);
         return await resp.json();
     } catch (e) {
         console.error('API Error:', e);
@@ -151,6 +147,7 @@ async function apiCall(method, params = {}) {
 
 // ===== Cadastro, Login e Painel Corretor =====
 async function registerCorretor() {
+    const msgEl = document.getElementById('registerMsg');
     const data = {
         type: "cadastro",
         nome: document.getElementById('nome').value.trim(),
@@ -160,28 +157,31 @@ async function registerCorretor() {
         senha: document.getElementById('senha').value.trim()
     };
     if (!data.nome || !data.telefone || !data.creci || !data.senha) {
-        document.getElementById('registerMsg').innerText = 'Preencha todos os campos obrigatórios!';
+        msgEl.innerText = 'Preencha todos os campos obrigatórios!';
         return;
     }
+    msgEl.innerText = 'Cadastrando...';
     const result = await apiCall('POST', data);
     if (result.status === "ok") {
-        document.getElementById('registerMsg').innerText = 'Cadastro realizado com sucesso!';
-        setTimeout(() => { backHome(); }, 1500);
+        msgEl.innerText = 'Cadastro realizado com sucesso!';
+        setTimeout(() => { showLogin(); msgEl.innerText = ''; }, 1500);
     } else {
-        document.getElementById('registerMsg').innerText = 'Erro no cadastro: ' + result.message;
+        msgEl.innerText = 'Erro no cadastro: ' + result.message;
     }
 }
 
 async function login() {
     const user = document.getElementById('username').value.trim().toLowerCase();
     const pass = document.getElementById('password').value.trim();
+    if (!user || !pass) {
+        document.getElementById('loginError').innerText = 'Usuário e senha são obrigatórios.';
+        return;
+    }
     const result = await apiCall('GET', { action: 'getCorretores' });
-    
     if (result.status === "error" || !Array.isArray(result)) {
         document.getElementById('loginError').innerText = 'Erro ao carregar corretores.';
         return;
     }
-    
     const found = result.find(c => c.nome.toLowerCase() === user && String(c.senha) === pass);
     if (found) {
         document.getElementById('loginError').innerText = '';
@@ -201,16 +201,14 @@ function openPanel(user) {
 
 async function addImovel() {
     if (!currentUser) { alert('Você precisa estar logado.'); return; }
-    
     const fotos = [];
     for(let i = 1; i <= 10; i++) {
         const f = document.getElementById('foto' + i).value.trim();
         if(f) fotos.push(f);
     }
-
     const data = {
         type: "imovel",
-        corretor: currentUser.nome, // Adiciona o nome do corretor logado
+        corretor: currentUser.nome,
         nome: document.getElementById('nomeImovel').value.trim(),
         preco: document.getElementById('preco').value.trim(),
         endereco: document.getElementById('endereco').value.trim(),
@@ -218,13 +216,10 @@ async function addImovel() {
         descricao: document.getElementById('descricao').value.trim(),
         fotos: fotos
     };
-
     if (!data.nome) { alert('Preencha o nome do imóvel'); return; }
-    
     const result = await apiCall('POST', data);
     if (result.status === "ok") {
         alert('Imóvel adicionado com sucesso!');
-        // Limpa os campos após adicionar
         ['nomeImovel', 'preco', 'endereco', 'site', 'descricao'].forEach(id => document.getElementById(id).value = '');
         for(let i = 1; i <= 10; i++) { document.getElementById('foto' + i).value = ''; }
     } else {
@@ -233,45 +228,51 @@ async function addImovel() {
 }
 
 // ===== Painel do Cliente =====
-async function showClient(user = null) {
+async function showClient(userFilter = null) {
     show('clientDiv');
     const clientCardsDiv = document.getElementById('clientCards');
     const clientTitle = document.getElementById('clientTitle');
     clientCardsDiv.innerHTML = '<p>Carregando imóveis...</p>';
 
-    const result = await apiCall('GET', { action: 'getImoveis' });
-    
-    if (result.status === "error" || !Array.isArray(result)) {
+    const [corretoresResult, imoveisResult] = await Promise.all([
+        apiCall('GET', { action: 'getCorretores' }),
+        apiCall('GET', { action: 'getImoveis' })
+    ]);
+
+    if (imoveisResult.status === "error" || !Array.isArray(imoveisResult)) {
         clientCardsDiv.innerHTML = '<p>Não foi possível carregar os imóveis.</p>';
         return;
     }
     
-    let imoveis = result;
-    // Se um usuário foi especificado na URL, filtra os imóveis
-    if (user) {
-        imoveis = result.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === user.toLowerCase());
-        clientTitle.innerText = `Vitrine de ${user}`;
+    let imoveis = imoveisResult;
+    if (userFilter) {
+        imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
+        clientTitle.innerText = `Vitrine de ${userFilter}`;
     } else {
-        clientTitle.innerText = `Vitrine de Imóveis (Geral)`;
+        clientTitle.innerText = 'Vitrine de Imóveis (Geral)';
     }
 
     if (imoveis.length === 0) {
-        clientCardsDiv.innerHTML = '<p>Nenhum imóvel encontrado.</p>';
+        clientCardsDiv.innerHTML = '<p>Nenhum imóvel encontrado para este corretor.</p>';
         return;
     }
     
-    clientCardsDiv.innerHTML = ''; // Limpa o "Carregando..."
+    clientCardsDiv.innerHTML = '';
     imoveis.forEach(imovel => {
         const fotos = imovel.fotos ? JSON.parse(imovel.fotos) : [];
+        const corretor = corretoresResult.find(c => c.nome === imovel.corretor);
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
             <img src="${fotos[0] || 'https://via.placeholder.com/300x200?text=Sem+Foto'}" alt="${imovel.nome}">
-            <h3>${imovel.nome}</h3>
-            <p class="small" style="font-weight:bold; color:#33c16b">${imovel.preco}</p>
+            <h3 class="card-title">${imovel.nome}</h3>
+            <p class="card-price">${imovel.preco}</p>
             <p class="small">${imovel.endereco}</p>
             <p class="small" style="margin-top:8px;">${imovel.descricao}</p>
-            <p class="small" style="margin-top:8px;"><strong>Corretor:</strong> ${imovel.corretor}</p>
+            <div class="card-broker">
+                <p><strong>Corretor:</strong> ${imovel.corretor || 'Não informado'}</p>
+                ${corretor ? `<p><strong>CRECI:</strong> ${corretor.creci} | <strong>Telefone:</strong> ${corretor.telefone}</p>` : ''}
+            </div>
             ${imovel.site ? `<a href="${imovel.site}" target="_blank" class="btn btn-sm btn-blue" style="margin-top:10px;">Ver Site</a>` : ''}
             <button class="btn btn-sm btn-green" style="margin-top:10px;">Agendar Visita</button>
         `;
@@ -284,10 +285,8 @@ window.onload = function() {
     const params = new URLSearchParams(window.location.search);
     const user = params.get('user');
     if (user) {
-        // Se a URL tem um usuário (ex: ?user=marcos), vai direto para a vitrine dele
         showClient(user);
     } else {
-        // Senão, mostra a tela inicial
         show('homeDiv');
     }
 };
