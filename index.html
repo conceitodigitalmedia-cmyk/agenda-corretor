@@ -79,7 +79,7 @@
 </div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbzUzm5YgbYfSjU0tQE1kTbQ_J72kuBBjQajyr5B-Z9vo0TjRFwcZ47wE3aJXNFda7B9/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzsbS7fVZUBcqxTkGYoosKn3W8gOIE3vhV-4lGYgXpkk6bEktRZsK_ou8ZOps9FQKOocA/exec";
 let currentUser = null;
 
 function show(divId) {
@@ -118,7 +118,7 @@ async function apiCall(method, params = {}) {
         return await resp.json();
     } catch (e) {
         console.error('API Error:', e);
-        alert("Erro de comunicação: " + e.message + ". Verifique se o script foi implantado corretamente com acesso para 'Qualquer pessoa' e se a planilha está compartilhada.");
+        alert("Erro de comunicação: " + e.message);
         return { status: "error", message: e.message };
     } finally {
         document.body.style.cursor = 'default';
