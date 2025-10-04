@@ -6,72 +6,100 @@
 <title>Agenda Corretor - Premium</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-    body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Estilos para o scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1a202c; /* slate-900 */ }
+    ::-webkit-scrollbar-thumb { background: #4a5568; /* slate-600 */ border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; /* slate-500 */ }
+
+    /* Animação de fade-in para elementos */
+    .fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
 </style>
 </head>
-<body class="bg-slate-900 text-gray-300 antialiased">
-<div class="container mx-auto p-4 flex flex-col min-h-screen">
+<body class="bg-gradient-to-br from-slate-900 to-gray-950 text-gray-200 antialiased min-h-screen flex flex-col">
 
-<main class="flex-grow flex flex-col items-center justify-center">
-    
+<div class="container mx-auto p-6 flex flex-col flex-grow">
+
+<main class="flex-grow flex items-center justify-center py-10">
     <div id="main-content" class="w-full">
+        
         <div id="auth-container" class="w-full max-w-4xl mx-auto" style="display: none;">
-            <header class="flex justify-between items-center mb-10 px-2">
-                <h1 class="text-3xl font-bold text-white tracking-wide">
-                    Agenda do Corretor
+            <header class="flex flex-col sm:flex-row justify-between items-center mb-12 px-2 text-center sm:text-left">
+                <h1 class="text-5xl font-extrabold text-white tracking-tight leading-tight mb-4 sm:mb-0 drop-shadow-lg">
+                    Agenda do <span class="text-orange-400">Corretor</span>
                 </h1>
-                <div class="flex gap-2">
-                    <button id="btn-show-client" class="px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors shadow-md text-sm">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="btn-show-client" class="px-7 py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-all duration-300 shadow-xl transform hover:scale-105 text-lg">
                         Acesso Cliente
+                    </button>
+                    <button id="btn-show-register-modal" class="px-7 py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition-all duration-300 shadow-xl transform hover:scale-105 text-lg">
+                        Criar Conta
                     </button>
                 </div>
             </header>
             
-            <div id="login-register-grid" class="grid md:grid-cols-2 gap-8">
-                <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-2xl">
-                    <h2 class="text-3xl font-bold text-white text-center mb-6">Login</h2>
-                    <div class="space-y-4">
-                        <input id="username" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" placeholder="Usuário (seu nome, em minúsculas)" />
-                        <input id="password" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" type="password" placeholder="Senha" />
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-10 shadow-2xl hover:shadow-primary-glow transition-all duration-300 fade-in delay-100">
+                    <h2 class="text-4xl font-bold text-white text-center mb-8">Entrar</h2>
+                    <div class="space-y-6">
+                        <input id="username" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-orange-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" placeholder="Usuário (seu nome, em minúsculas)" />
+                        <input id="password" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-orange-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" type="password" placeholder="Senha" />
                     </div>
-                    <div class="mt-6">
-                        <button class="w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition-colors" onclick="login()">Entrar</button>
+                    <div class="mt-8">
+                        <button class="w-full py-4 px-8 bg-orange-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-orange-700 transition-all duration-300 transform hover:scale-105 text-xl" onclick="login()">Acessar Painel</button>
                     </div>
-                    <p id="loginError" class="text-sm text-center mt-4 text-red-400"></p>
+                    <p id="loginError" class="text-md text-center mt-5 text-red-400 font-medium"></p>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-2xl">
-                    <h2 class="text-3xl font-bold text-white text-center mb-6">Criar Conta</h2>
-                    <div class="space-y-4">
-                        <input id="nome" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Nome Completo (obrigatório)" />
-                        <input id="email" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="E-mail" />
-                        <input id="telefone" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Telefone (obrigatório)" />
-                        <input id="creci" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="CRECI (obrigatório)" />
-                        <input id="senha" class="w-full p-3 bg-slate-700 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" type="password" placeholder="Senha (obrigatório)" />
+
+                <div id="register-card" class="bg-slate-800 border border-slate-700 rounded-2xl p-10 shadow-2xl hover:shadow-primary-glow transition-all duration-300 fade-in delay-200">
+                    <h2 class="text-4xl font-bold text-white text-center mb-8">Crie sua Conta</h2>
+                    <div class="space-y-6">
+                        <input id="nome" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" placeholder="Nome Completo (obrigatório)" />
+                        <input id="email" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" placeholder="E-mail (opcional)" />
+                        <input id="telefone" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" placeholder="Telefone (obrigatório)" />
+                        <input id="creci" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" placeholder="CRECI (obrigatório)" />
+                        <input id="senha" class="w-full p-4 bg-slate-700 text-white border border-slate-600 rounded-xl focus:ring-4 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-slate-400 text-lg" type="password" placeholder="Senha (obrigatório)" />
                     </div>
-                    <div class="mt-6">
-                        <button class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors" onclick="registerCorretor()">Cadastrar</button>
+                    <div class="mt-8">
+                        <button class="w-full py-4 px-8 bg-green-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 text-xl" onclick="registerCorretor()">Cadastrar Agora</button>
                     </div>
-                    <p id="registerMsg" class="text-sm text-center mt-4"></p>
+                    <p id="registerMsg" class="text-md text-center mt-5 text-emerald-400 font-medium"></p>
                 </div>
             </div>
         </div>
 
-        <div id="panelDiv" class="max-w-4xl mx-auto" style="display:none">
+        <div id="panelDiv" class="max-w-6xl mx-auto" style="display:none">
            </div>
 
-        <div id="clientDiv" style="display:none">
-            <header class="flex justify-between items-center mb-8">
-                <h2 id="clientTitle" class="text-3xl font-bold text-white">Vitrine de Imóveis</h2>
-                <button class="py-2 px-4 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors text-sm" onclick="backHome()">Voltar ao Início</button>
+        <div id="clientDiv" class="max-w-6xl mx-auto" style="display:none">
+            <header class="flex flex-col sm:flex-row justify-between items-center mb-10 pb-5 border-b border-slate-700">
+                <h2 id="clientTitle" class="text-4xl font-extrabold text-white mb-4 sm:mb-0 drop-shadow-lg">Vitrine de <span class="text-orange-400">Imóveis</span></h2>
+                <button class="py-3 px-6 bg-slate-700 text-white font-semibold rounded-full hover:bg-slate-600 transition-all duration-300 shadow-md text-lg transform hover:scale-105" onclick="backHome()">Voltar ao Início</button>
             </header>
-            <div id="clientCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="clientCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <p class="text-slate-400 text-center col-span-full animate-pulse">Carregando imóveis...</p>
+            </div>
         </div>
+
     </div>
 </main>
 
-<footer class="text-center py-6 mt-auto">
+<footer class="text-center py-8 mt-12 border-t border-slate-800">
     <p class="text-sm font-semibold text-white">agência conceito</p>
-    <p class="text-xs text-slate-500 mt-1">
+    <p class="text-xs text-slate-500 mt-2">
         design by Marcos Greijo - +55 19 9.8906-5333
     </p>
 </footer>
@@ -79,187 +107,402 @@
 </div>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbzsbS7fVZUBcqxTkGYoosKn3W8gOIE3vhV-4lGYgXpkk6bEktRZsK_ou8ZOps9FQKOocA/exec";
-let currentUser = null;
+    // **IMPORTANTE**: COLOQUE AQUI O SEU NOVO URL DO GOOGLE APPS SCRIPT
+    // Se você ainda está usando o antigo por alguma razão, substitua por ele.
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycbzsbS7fVZUBcqxTkGYoosKn3W8gOIE3vhV-4lGYgXpkk6bEktRZsK_ou8ZOps9FQKOocA/exec"; 
+    
+    let currentUser = null;
 
-function show(divId) {
-    ['auth-container', 'panelDiv', 'clientDiv'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = (id === divId) ? 'block' : 'none';
-    });
-}
-
-function backHome() { 
-    localStorage.removeItem('loggedInUser');
-    currentUser = null;
-    show('auth-container'); 
-    window.history.pushState({}, document.title, window.location.pathname);
-}
-
-function logout() {
-    currentUser = null;
-    localStorage.removeItem('loggedInUser');
-    backHome();
-}
-
-async function apiCall(method, params = {}) {
-    document.body.style.cursor = 'wait';
-    try {
-        let url = SHEET_URL;
-        const options = { method, redirect: 'follow' };
-        if (method === 'GET') {
-            const query = new URLSearchParams(params).toString();
-            if(query) url += '?' + query;
-        } else {
-            options.body = JSON.stringify(params);
-        }
-        const resp = await fetch(url, options);
-        if (!resp.ok) throw new Error('Erro de rede (' + resp.status + ')');
-        return await resp.json();
-    } catch (e) {
-        console.error('API Error:', e);
-        alert("Erro de comunicação: " + e.message);
-        return { status: "error", message: e.message };
-    } finally {
-        document.body.style.cursor = 'default';
+    // Função para mostrar/esconder as divs principais
+    function show(divId) {
+        ['auth-container', 'panelDiv', 'clientDiv'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = (id === divId) ? 'block' : 'none';
+        });
     }
-}
 
-async function registerCorretor() {
-    const msgEl = document.getElementById('registerMsg');
-    const data = { type: "cadastro", nome: document.getElementById('nome').value.trim(), email: document.getElementById('email').value.trim(), telefone: document.getElementById('telefone').value.trim(), creci: document.getElementById('creci').value.trim(), senha: document.getElementById('senha').value.trim() };
-    if (!data.nome || !data.telefone || !data.creci || !data.senha) { msgEl.innerText = 'Preencha todos os campos obrigatórios!'; return; }
-    msgEl.innerText = 'Cadastrando...';
-    const result = await apiCall('POST', data);
-    if (result.status === "ok") {
-        msgEl.innerText = 'Cadastro realizado com sucesso!';
-        setTimeout(() => { 
-            msgEl.innerText = '';
-            document.getElementById('username').value = data.nome.toLowerCase();
-        }, 2000);
-    } else { msgEl.innerText = `Erro no cadastro: ${result.message}`; }
-}
+    // Voltar para a tela inicial (login)
+    function backHome() { 
+        localStorage.removeItem('loggedInUser');
+        currentUser = null;
+        show('auth-container'); 
+        window.history.pushState({}, document.title, window.location.pathname);
+    }
 
-async function login() {
-    const user = document.getElementById('username').value.trim().toLowerCase();
-    const pass = document.getElementById('password').value.trim();
-    if (!user || !pass) { document.getElementById('loginError').innerText = 'Usuário e senha são obrigatórios.'; return; }
-    const result = await apiCall('GET', { action: 'getCorretores' });
-    if (!Array.isArray(result)) { document.getElementById('loginError').innerText = 'Erro ao carregar dados dos corretores.'; return; }
-    const found = result.find(c => c.nome.toLowerCase() === user && String(c.senha) === pass);
-    if (found) {
-        document.getElementById('loginError').innerText = '';
-        localStorage.setItem('loggedInUser', JSON.stringify(found));
-        openPanel(found);
-    } else { document.getElementById('loginError').innerText = 'Usuário ou senha incorretos'; }
-}
+    // Sair do painel do corretor
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('loggedInUser');
+        backHome();
+    }
 
-function openPanel(user) {
-    currentUser = user;
-    show('panelDiv');
-    const panel = document.getElementById('panelDiv');
-    panel.innerHTML = `
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-white">Painel do Corretor</h1>
-            <div class="flex items-center gap-4">
-                <span id="welcome" class="text-slate-400">Olá, ${user.nome.split(' ')[0]}</span>
-                <button class="py-2 px-4 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors text-sm" onclick="logout()">Sair</button>
-            </div>
-        </header>
-        <div class="space-y-6">
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
-                <p class="text-sm text-slate-400">Seu link individual para clientes:</p>
-                <input id="linkCorretor" class="w-full mt-2 p-2 bg-slate-900 border border-slate-600 text-slate-300 rounded-lg" readonly value="${window.location.href.split('?')[0]}?user=${encodeURIComponent(user.nome.toLowerCase())}">
-            </div>
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
-                <h3 class="text-xl font-semibold text-white mb-4">Adicionar Imóvel</h3>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <input id="nomeImovel" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full" placeholder="Nome do imóvel" />
-                    <input id="preco" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full" placeholder="Preço (Ex: R$ 500.000,00)" />
-                    <input id="endereco" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full md:col-span-2" placeholder="Endereço / Cidade" />
-                    <input id="site" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full md:col-span-2" placeholder="Site do imóvel (opcional)" />
-                    <textarea id="descricao" class="bg-slate-700 border border-slate-600 rounded-lg p-3 w-full md:col-span-2" rows="3" placeholder="Descrição"></textarea>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-slate-400 mb-2">Cole os links das imagens abaixo (até 10):</p>
-                        <div id="fotosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            ${Array.from({length: 10}, (_, i) => `<input id="foto${i+1}" class="bg-slate-700 border-slate-600 rounded-lg p-3 w-full" placeholder="Link Foto ${i+1}${i===0 ? ' (principal)' : ''}" />`).join('')}
-                        </div>
+    // Função genérica para chamar a API do Apps Script
+    async function apiCall(method, params = {}) {
+        document.body.style.cursor = 'wait'; // Mostra cursor de carregamento
+        try {
+            let url = SHEET_URL;
+            const options = { method, redirect: 'follow' };
+
+            if (method === 'GET') {
+                const query = new URLSearchParams(params).toString();
+                if(query) url += '?' + query; // Adiciona os parâmetros na URL para GET
+            } else { // Para POST
+                options.body = JSON.stringify(params); // Envia os parâmetros no corpo da requisição
+                options.headers = { 'Content-Type': 'application/json' }; // Importante para POST
+            }
+            
+            const resp = await fetch(url, options);
+            if (!resp.ok) {
+                const errorText = await resp.text();
+                throw new Error(`Erro de rede (${resp.status}): ${errorText}`);
+            }
+            return await resp.json();
+        } catch (e) {
+            console.error('API Error:', e);
+            alert("Erro de comunicação: " + e.message + ". Verifique se o Apps Script está publicado corretamente e a URL está certa.");
+            return { status: "error", message: e.message };
+        } finally {
+            document.body.style.cursor = 'default'; // Volta ao cursor normal
+        }
+    }
+
+    // Função para cadastrar um novo corretor
+    async function registerCorretor() {
+        const msgEl = document.getElementById('registerMsg');
+        const data = { 
+            type: "cadastro", 
+            nome: document.getElementById('nome').value.trim(), 
+            email: document.getElementById('email').value.trim(), 
+            telefone: document.getElementById('telefone').value.trim(), 
+            creci: document.getElementById('creci').value.trim(), 
+            senha: document.getElementById('senha').value.trim() 
+        };
+
+        if (!data.nome || !data.telefone || !data.creci || !data.senha) { 
+            msgEl.className = 'text-md text-center mt-5 text-red-400 font-medium';
+            msgEl.innerText = 'Preencha todos os campos obrigatórios!'; 
+            return; 
+        }
+
+        msgEl.className = 'text-md text-center mt-5 text-indigo-400 font-medium animate-pulse';
+        msgEl.innerText = 'Cadastrando...';
+        
+        const result = await apiCall('POST', data);
+
+        if (result.status === "ok") {
+            msgEl.className = 'text-md text-center mt-5 text-emerald-400 font-medium';
+            msgEl.innerText = 'Cadastro realizado com sucesso! Faça login abaixo.';
+            // Limpa os campos após o cadastro
+            ['nome', 'email', 'telefone', 'creci', 'senha'].forEach(id => document.getElementById(id).value = '');
+            setTimeout(() => { 
+                msgEl.innerText = '';
+                document.getElementById('username').value = data.nome.toLowerCase(); // Preenche o username para facilitar o login
+            }, 3000);
+        } else { 
+            msgEl.className = 'text-md text-center mt-5 text-red-400 font-medium';
+            msgEl.innerText = `Erro no cadastro: ${result.message}`; 
+        }
+    }
+
+    // Função para realizar o login
+    async function login() {
+        const user = document.getElementById('username').value.trim().toLowerCase();
+        const pass = document.getElementById('password').value.trim();
+        const loginErrorEl = document.getElementById('loginError');
+
+        if (!user || !pass) { 
+            loginErrorEl.innerText = 'Usuário e senha são obrigatórios.'; 
+            return; 
+        }
+        loginErrorEl.innerText = 'Verificando...';
+
+        try {
+            const result = await apiCall('GET', { action: 'getCorretores' });
+            
+            if (!Array.isArray(result)) { 
+                loginErrorEl.innerText = 'Erro ao carregar dados dos corretores.'; 
+                return; 
+            }
+
+            const found = result.find(c => c.nome && c.nome.toLowerCase() === user && String(c.senha) === pass);
+
+            if (found) {
+                loginErrorEl.innerText = '';
+                localStorage.setItem('loggedInUser', JSON.stringify(found));
+                openPanel(found);
+            } else { 
+                loginErrorEl.innerText = 'Usuário ou senha incorretos.'; 
+            }
+        } catch (e) {
+            loginErrorEl.innerText = 'Erro de login: ' + e.message;
+        }
+    }
+
+    // Carrega o painel do corretor
+    function openPanel(user) {
+        currentUser = user;
+        show('panelDiv');
+        const panel = document.getElementById('panelDiv');
+        panel.innerHTML = `
+            <header class="flex flex-col sm:flex-row justify-between items-center mb-10 pb-5 border-b border-slate-700 fade-in">
+                <h1 class="text-4xl font-extrabold text-white mb-4 sm:mb-0 drop-shadow-lg">Bem-vindo(a), <span class="text-orange-400">${user.nome.split(' ')[0]}</span></h1>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="py-3 px-6 bg-purple-600 text-white font-semibold rounded-full hover:bg-purple-700 transition-all duration-300 shadow-md text-lg transform hover:scale-105" onclick="showClient()">Ver Vitrine</button>
+                    <button class="py-3 px-6 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 transition-all duration-300 shadow-md text-lg transform hover:scale-105" onclick="logout()">Sair</button>
+                </div>
+            </header>
+            <div class="space-y-8">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl fade-in delay-100">
+                    <h3 class="text-2xl font-bold text-white mb-4">Seu Link Exclusivo</h3>
+                    <p class="text-md text-slate-400 mb-3">Compartilhe este link para seus clientes verem seus imóveis:</p>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input id="linkCorretor" class="flex-grow p-4 bg-slate-900 border border-slate-600 text-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-md" readonly value="${window.location.href.split('?')[0]}?user=${encodeURIComponent(user.nome.toLowerCase())}">
+                        <button class="py-3 px-6 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow-md text-md transform hover:scale-105" onclick="copyLink()">Copiar Link</button>
                     </div>
                 </div>
-                <button class="w-full mt-4 md:w-auto py-2 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors" onclick="addImovel()">Adicionar Imóvel</button>
-            </div>
-        </div>`;
-}
 
-async function addImovel() {
-    if (!currentUser) { alert('Você precisa estar logado.'); return; }
-    const fotos = Array.from({length: 10}, (_, i) => document.getElementById(`foto${i+1}`).value.trim()).filter(Boolean);
-    const data = { type: "imovel", corretor: currentUser.nome, nome: document.getElementById('nomeImovel').value.trim(), preco: document.getElementById('preco').value.trim(), endereco: document.getElementById('endereco').value.trim(), site: document.getElementById('site').value.trim(), descricao: document.getElementById('descricao').value.trim(), fotos: fotos };
-    if (!data.nome) { alert('Preencha o nome do imóvel'); return; }
-    const result = await apiCall('POST', data);
-    if (result.status === "ok") {
-        alert('Imóvel adicionado com sucesso!');
-        ['nomeImovel', 'preco', 'endereco', 'site', 'descricao'].forEach(id => document.getElementById(id).value = '');
-        for(let i = 1; i <= 10; i++) { document.getElementById('foto' + i).value = ''; }
-    } else { alert('Erro ao adicionar imóvel: ' + result.message); }
-}
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl fade-in delay-200">
+                    <h3 class="text-3xl font-bold text-white mb-6">Cadastrar Novo Imóvel</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <input id="nomeImovel" class="bg-slate-700 border border-slate-600 rounded-xl p-4 w-full placeholder:text-slate-400 focus:ring-2 focus:ring-green-500 outline-none" placeholder="Nome do imóvel (Ex: Apartamento Centro)" />
+                        <input id="preco" class="bg-slate-700 border border-slate-600 rounded-xl p-4 w-full placeholder:text-slate-400 focus:ring-2 focus:ring-green-500 outline-none" placeholder="Preço (Ex: R$ 500.000,00)" />
+                        <input id="endereco" class="bg-slate-700 border border-slate-600 rounded-xl p-4 w-full md:col-span-2 placeholder:text-slate-400 focus:ring-2 focus:ring-green-500 outline-none" placeholder="Endereço / Cidade / Bairro" />
+                        <input id="site" class="bg-slate-700 border border-slate-600 rounded-xl p-4 w-full md:col-span-2 placeholder:text-slate-400 focus:ring-2 focus:ring-green-500 outline-none" placeholder="Link do anúncio externo (Opcional)" />
+                        <textarea id="descricao" class="bg-slate-700 border border-slate-600 rounded-xl p-4 w-full md:col-span-2 placeholder:text-slate-400 focus:ring-2 focus:ring-green-500 outline-none" rows="4" placeholder="Descrição detalhada do imóvel..."></textarea>
+                        <div class="md:col-span-2">
+                            <p class="text-md text-slate-400 mb-3 font-medium">Links das Fotos (cole os URLs das imagens - até 5, a primeira é a principal):</p>
+                            <div id="fotosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${Array.from({length: 5}, (_, i) => `<input id="foto${i+1}" class="bg-slate-700 border border-slate-600 rounded-xl p-3 w-full placeholder:text-slate-500 focus:ring-2 focus:ring-green-500 outline-none text-sm" placeholder="Link Foto ${i+1}${i===0 ? ' (principal)' : ''}" />`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-8 py-4 px-8 bg-green-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 text-xl" onclick="addImovel()">Salvar Imóvel</button>
+                    <p id="addImovelMsg" class="text-md text-center mt-5 text-emerald-400 font-medium"></p>
+                </div>
 
-async function renderClientProperties(userFilter = null) {
-    const clientCardsDiv = document.getElementById('clientCards');
-    const clientTitle = document.getElementById('clientDiv').querySelector('h2');
-    clientCardsDiv.innerHTML = '<p class="text-slate-400">Carregando imóveis...</p>';
-    const [corretoresResult, imoveisResult] = await Promise.all([ apiCall('GET', { action: 'getCorretores' }), apiCall('GET', { action: 'getImoveis' }) ]);
-    if (!Array.isArray(imoveisResult)) { clientCardsDiv.innerHTML = '<p class="text-red-400">Não foi possível carregar os imóveis.</p>'; return; }
-    let imoveis = imoveisResult;
-    if (userFilter) {
-        imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
-        clientTitle.innerText = `Vitrine de ${userFilter}`;
-    } else {
-        clientTitle.innerText = 'Vitrine de Imóveis (Geral)';
-    }
-    if (imoveis.length === 0) { clientCardsDiv.innerHTML = '<p class="text-slate-400">Nenhum imóvel encontrado.</p>'; return; }
-    clientCardsDiv.innerHTML = '';
-    imoveis.forEach(imovel => {
-        const fotos = (typeof imovel.fotos === 'string' && imovel.fotos.startsWith('[')) ? JSON.parse(imovel.fotos) : [];
-        const corretor = Array.isArray(corretoresResult) ? corretoresResult.find(c => c.nome === imovel.corretor) : null;
-        const card = document.createElement('div');
-        card.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg flex flex-col transition-transform transform hover:-translate-y-1';
-        card.innerHTML = `
-            <img src="${fotos[0] || 'https://via.placeholder.com/400x250?text=Sem+Foto'}" alt="${imovel.nome}" class="w-full h-48 object-cover rounded-lg mb-4">
-            <h3 class="text-xl font-bold text-white">${imovel.nome}</h3>
-            <p class="text-lg font-semibold text-green-400 mt-1">${imovel.preco}</p>
-            <p class="text-sm text-slate-400 mt-2">${imovel.endereco}</p>
-            <p class="text-sm text-slate-300 mt-3 flex-grow">${imovel.descricao}</p>
-            <div class="text-xs text-slate-400 mt-4 pt-3 border-t border-slate-700">
-                <p><strong>Corretor:</strong> ${imovel.corretor || 'N/A'}</p>
-                ${corretor ? `<p><strong>CRECI:</strong> ${corretor.creci} | <strong>Telefone:</strong> ${corretor.telefone}</p>` : ''}
-            </div>
-            <div class="mt-4 flex gap-2">
-                ${imovel.site ? `<a href="${imovel.site}" target="_blank" class="flex-1 text-center py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 text-sm">Ver Site</a>` : ''}
-                <button class="flex-1 text-center py-2 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 text-sm">Agendar Visita</button>
-            </div>
-        `;
-        clientCardsDiv.appendChild(card);
-    });
-}
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl fade-in delay-300">
+                    <h3 class="text-3xl font-bold text-white mb-6">Meus Imóveis Cadastrados</h3>
+                    <div id="myPropertiesList" class="space-y-4">
+                        <p class="text-slate-400 text-center animate-pulse">Carregando seus imóveis...</p>
+                    </div>
+                </div>
 
-// Inicialização da Página
-window.onload = function() {
-    document.getElementById('btn-show-client').addEventListener('click', () => showClient());
-    
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if(loggedInUser) {
-        openPanel(JSON.parse(loggedInUser));
-        return;
+            </div>`;
+            renderMyProperties(user.nome); // Carrega os imóveis do corretor
     }
-    const params = new URLSearchParams(window.location.search);
-    const user = params.get('user');
-    if (user) {
-        showClient(user);
-    } else {
-        show('auth-container');
+
+    // Copiar link do corretor
+    function copyLink() {
+        const linkInput = document.getElementById('linkCorretor');
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999); /* For mobile devices */
+        document.execCommand('copy');
+        alert('Link copiado para a área de transferência!');
     }
-};
+
+    // Adicionar um novo imóvel
+    async function addImovel() {
+        if (!currentUser) { alert('Você precisa estar logado.'); return; }
+        const addImovelMsgEl = document.getElementById('addImovelMsg');
+
+        const fotos = Array.from({length: 5}, (_, i) => document.getElementById(`foto${i+1}`).value.trim()).filter(Boolean);
+        if (fotos.length === 0) {
+            addImovelMsgEl.className = 'text-md text-center mt-5 text-red-400 font-medium';
+            addImovelMsgEl.innerText = 'Por favor, adicione pelo menos uma foto para o imóvel.';
+            return;
+        }
+
+        const data = { 
+            type: "imovel", 
+            corretor: currentUser.nome, 
+            nome: document.getElementById('nomeImovel').value.trim(), 
+            preco: document.getElementById('preco').value.trim(), 
+            endereco: document.getElementById('endereco').value.trim(), 
+            site: document.getElementById('site').value.trim(), 
+            descricao: document.getElementById('descricao').value.trim(), 
+            fotos: fotos 
+        };
+
+        if (!data.nome || !data.preco || !data.endereco || !data.descricao) { 
+            addImovelMsgEl.className = 'text-md text-center mt-5 text-red-400 font-medium';
+            addImovelMsgEl.innerText = 'Preencha todos os campos obrigatórios do imóvel (Nome, Preço, Endereço, Descrição)!'; 
+            return; 
+        }
+
+        addImovelMsgEl.className = 'text-md text-center mt-5 text-indigo-400 font-medium animate-pulse';
+        addImovelMsgEl.innerText = 'Adicionando imóvel...';
+
+        const result = await apiCall('POST', data);
+
+        if (result.status === "ok") {
+            addImovelMsgEl.className = 'text-md text-center mt-5 text-emerald-400 font-medium';
+            addImovelMsgEl.innerText = 'Imóvel adicionado com sucesso!';
+            // Limpa os campos após adicionar o imóvel
+            ['nomeImovel', 'preco', 'endereco', 'site', 'descricao'].forEach(id => document.getElementById(id).value = '');
+            for(let i = 1; i <= 5; i++) { document.getElementById('foto' + i).value = ''; }
+            renderMyProperties(currentUser.nome); // Recarrega a lista de imóveis
+            setTimeout(() => addImovelMsgEl.innerText = '', 3000); // Limpa a mensagem
+        } else { 
+            addImovelMsgEl.className = 'text-md text-center mt-5 text-red-400 font-medium';
+            addImovelMsgEl.innerText = `Erro ao adicionar imóvel: ${result.message}`; 
+        }
+    }
+
+    // Renderiza os imóveis do corretor logado no painel
+    async function renderMyProperties(corretorName) {
+        const myPropertiesListDiv = document.getElementById('myPropertiesList');
+        myPropertiesListDiv.innerHTML = '<p class="text-slate-400 text-center animate-pulse">Carregando seus imóveis...</p>';
+        
+        try {
+            const imoveisResult = await apiCall('GET', { action: 'getImoveis' });
+            
+            if (!Array.isArray(imoveisResult)) {
+                myPropertiesListDiv.innerHTML = '<p class="text-red-400 text-center">Não foi possível carregar seus imóveis.</p>';
+                return;
+            }
+
+            const myImoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === corretorName.toLowerCase());
+
+            if (myImoveis.length === 0) {
+                myPropertiesListDiv.innerHTML = '<p class="text-slate-400 text-center">Você ainda não cadastrou nenhum imóvel.</p>';
+                return;
+            }
+
+            myPropertiesListDiv.innerHTML = ''; // Limpa antes de adicionar
+            myImoveis.forEach(imovel => {
+                const fotos = (typeof imovel.fotos === 'string' && imovel.fotos.startsWith('[')) ? JSON.parse(imovel.fotos) : [];
+                const propertyCard = document.createElement('div');
+                propertyCard.className = 'bg-slate-700 p-5 rounded-xl shadow-md flex items-center gap-4 fade-in hover:bg-slate-600 transition-colors duration-200';
+                propertyCard.innerHTML = `
+                    <img src="${fotos[0] || 'https://via.placeholder.com/100x70?text=Sem+Foto'}" alt="${imovel.nome}" class="w-20 h-16 object-cover rounded-md flex-shrink-0">
+                    <div class="flex-grow">
+                        <h4 class="text-lg font-bold text-white">${imovel.nome}</h4>
+                        <p class="text-sm text-green-400 font-semibold">${imovel.preco}</p>
+                        <p class="text-xs text-slate-400">${imovel.endereco}</p>
+                    </div>
+                    <button class="text-red-400 hover:text-red-500 transition-colors" onclick="deleteImovel('${imovel.id}')" title="Excluir Imóvel">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                `;
+                myPropertiesListDiv.appendChild(propertyCard);
+            });
+        } catch (error) {
+            myPropertiesListDiv.innerHTML = `<p class="text-red-400 text-center">Erro ao carregar imóveis: ${error.message}</p>`;
+        }
+    }
+
+    // Deletar um imóvel (funcionalidade futura, o Apps Script precisaria de uma função 'deleteImovel')
+    async function deleteImovel(idImovel) {
+        if (!confirm('Tem certeza que deseja excluir este imóvel?')) return;
+        alert('Funcionalidade de exclusão não implementada no Apps Script ainda.');
+        // Para implementar: você precisaria de uma função no Apps Script que receba o ID e exclua a linha da planilha.
+        // const result = await apiCall('POST', { type: "deleteImovel", id: idImovel });
+        // if (result.status === "ok") {
+        //     alert('Imóvel excluído!');
+        //     renderMyProperties(currentUser.nome); // Recarrega a lista
+        // } else {
+        //     alert('Erro ao excluir imóvel: ' + result.message);
+        // }
+    }
+
+
+    // Mostra a vitrine de imóveis para o cliente
+    async function showClient(userFilter = null) {
+        show('clientDiv');
+        const clientCardsDiv = document.getElementById('clientCards');
+        const clientTitleEl = document.getElementById('clientTitle');
+        clientCardsDiv.innerHTML = '<p class="text-slate-400 text-center col-span-full animate-pulse">Carregando imóveis...</p>';
+
+        try {
+            const [corretoresResult, imoveisResult] = await Promise.all([ 
+                apiCall('GET', { action: 'getCorretores' }), 
+                apiCall('GET', { action: 'getImoveis' }) 
+            ]);
+
+            if (!Array.isArray(imoveisResult)) { 
+                clientCardsDiv.innerHTML = '<p class="text-red-400 text-center col-span-full">Não foi possível carregar os imóveis.</p>'; 
+                return; 
+            }
+
+            let imoveis = imoveisResult;
+            let titleText = "Vitrine de Imóveis";
+
+            if (userFilter) {
+                // Filtra imóveis pelo corretor se houver um filtro
+                imoveis = imoveisResult.filter(imovel => imovel.corretor && imovel.corretor.toLowerCase() === userFilter.toLowerCase());
+                const filteredCorretor = corretoresResult.find(c => c.nome.toLowerCase() === userFilter.toLowerCase());
+                titleText = filteredCorretor ? `Imóveis de <span class="text-orange-400">${filteredCorretor.nome.split(' ')[0]}</span>` : `Imóveis de <span class="text-orange-400">${userFilter}</span>`;
+            }
+            clientTitleEl.innerHTML = titleText;
+
+            if (imoveis.length === 0) { 
+                clientCardsDiv.innerHTML = '<p class="text-slate-400 text-center col-span-full">Nenhum imóvel encontrado.</p>'; 
+                return; 
+            }
+
+            clientCardsDiv.innerHTML = ''; // Limpa antes de adicionar
+            imoveis.forEach((imovel, index) => {
+                const fotos = (typeof imovel.fotos === 'string' && imovel.fotos.startsWith('[')) ? JSON.parse(imovel.fotos) : [];
+                const corretor = Array.isArray(corretoresResult) ? corretoresResult.find(c => c.nome === imovel.corretor) : null;
+                
+                const card = document.createElement('div');
+                card.className = `bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl flex flex-col transition-transform transform hover:-translate-y-2 hover:shadow-primary-glow duration-300 fade-in delay-${index * 100}`;
+                card.innerHTML = `
+                    <img src="${fotos[0] || 'https://via.placeholder.com/400x250?text=Sem+Foto'}" alt="${imovel.nome}" class="w-full h-52 object-cover rounded-xl mb-5 border border-slate-700">
+                    <h3 class="text-2xl font-bold text-white mb-2">${imovel.nome}</h3>
+                    <p class="text-xl font-extrabold text-green-400 mb-3">${imovel.preco}</p>
+                    <p class="text-md text-slate-400 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        ${imovel.endereco}
+                    </p>
+                    <p class="text-sm text-slate-300 mb-5 flex-grow">${imovel.descricao}</p>
+                    <div class="text-sm text-slate-400 pt-4 border-t border-slate-700 mt-auto">
+                        <p class="font-medium">Corretor: <span class="text-white">${imovel.corretor || 'N/A'}</span></p>
+                        ${corretor ? `
+                            <p class="mt-1">CRECI: <span class="text-white">${corretor.creci}</span></p>
+                            <p class="mt-1">Telefone: <a href="tel:${corretor.telefone}" class="text-blue-400 hover:text-blue-300 transition-colors">${corretor.telefone}</a></p>
+                        ` : ''}
+                    </div>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        ${imovel.site ? `<a href="${imovel.site}" target="_blank" class="flex-1 text-center py-3 px-6 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 text-md transform hover:scale-105">Ver Anúncio</a>` : ''}
+                        <button class="flex-1 text-center py-3 px-6 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-300 text-md transform hover:scale-105" onclick="alert('Agendamento de visita para ${imovel.nome} com ${imovel.corretor} - Contato: ${corretor ? corretor.telefone : 'N/A'}')">Agendar Visita</button>
+                    </div>
+                `;
+                clientCardsDiv.appendChild(card);
+            });
+        } catch (error) {
+            clientCardsDiv.innerHTML = `<p class="text-red-400 text-center col-span-full">Erro ao carregar imóveis: ${error.message}</p>`;
+        }
+    }
+
+    // Inicialização da Página (ao carregar)
+    window.onload = function() {
+        // Event listeners para os botões do cabeçalho
+        document.getElementById('btn-show-client').addEventListener('click', () => showClient());
+        document.getElementById('btn-show-register-modal').addEventListener('click', () => {
+            // Poderíamos adicionar uma lógica para mudar o foco ou mostrar um modal de registro
+            // Por enquanto, o card de registro já está visível na tela inicial
+            document.getElementById('nome').focus(); // Apenas foca no primeiro campo de registro
+        });
+        
+        // Verifica se há um usuário logado no localStorage
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if(loggedInUser) {
+            openPanel(JSON.parse(loggedInUser)); // Se sim, abre o painel dele
+            return;
+        }
+
+        // Verifica se há um parâmetro 'user' na URL (para vitrine de cliente específica)
+        const params = new URLSearchParams(window.location.search);
+        const userParam = params.get('user');
+        if (userParam) {
+            showClient(userParam); // Se sim, mostra a vitrine desse corretor
+        } else {
+            show('auth-container'); // Caso contrário, mostra a tela de login/registro
+        }
+    };
 </script>
 
 </body>
